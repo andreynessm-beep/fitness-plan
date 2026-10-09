@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>План на неделю</title>
+<meta name="robots" content="noindex">
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--ink:#16181d;--muted:#5d6470;--line:#e3e6eb;
+  --gym:#2f6fed;--gym-bg:#e8f0ff;--rest:#1f9d63;--rest-bg:#e5f6ee;
+  --food:#c46a12;--food-bg:#fdf1e3;--pill:#7a3fd1;--pill-bg:#f1eafc;--warn:#c0392b;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1115;--card:#181b21;--ink:#e9ecf1;--muted:#9aa3b0;--line:#2a2f38;
+  --gym:#6f9bff;--gym-bg:#1a2540;--rest:#4fd197;--rest-bg:#14302a;
+  --food:#f0a35a;--food-bg:#33240f;--pill:#b48cff;--pill-bg:#271c3d;--warn:#ff7b6b;}}
+:root[data-theme="dark"]{
+  --bg:#0f1115;--card:#181b21;--ink:#e9ecf1;--muted:#9aa3b0;--line:#2a2f38;
+  --gym:#6f9bff;--gym-bg:#1a2540;--rest:#4fd197;--rest-bg:#14302a;
+  --food:#f0a35a;--food-bg:#33240f;--pill:#b48cff;--pill-bg:#271c3d;--warn:#ff7b6b;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:16px}
+header h1{font-size:22px;margin:4px 0 2px}
+header p{margin:0;color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.tabs button{flex:1 1 0;min-width:56px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 4px;font:600 14px system-ui;cursor:pointer}
+.tabs button small{display:block;font-weight:500;font-size:11px;color:var(--muted)}
+.tabs button.on{border-color:var(--gym);box-shadow:0 0 0 2px var(--gym) inset}
+.tabs button.rest.on{border-color:var(--rest);box-shadow:0 0 0 2px var(--rest) inset}
+.tools{display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px}
+.tools button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+.day{display:none}
+.day.on{display:block}
+.dayhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.dayhead h2{margin:0;font-size:24px}
+.badge{padding:4px 10px;border-radius:999px;font-size:13px;font-weight:600}
+.badge.gym{background:var(--gym-bg);color:var(--gym)}
+.badge.rest{background:var(--rest-bg);color:var(--rest)}
+.rules{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--muted)}
+.rules b{color:var(--ink)}
+.tl{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:12px}
+.row{display:grid;grid-template-columns:62px 1fr;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.t{padding:10px 0 10px 12px;font-weight:700;font-variant-numeric:tabular-nums}
+.c{padding:10px 12px 10px 4px}
+.c .ttl{font-weight:600}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:6px;margin:4px 4px 0 0}
+.tag.food{background:var(--food-bg);color:var(--food)}
+.tag.pill{background:var(--pill-bg);color:var(--pill)}
+.tag.gym{background:var(--gym-bg);color:var(--gym)}
+.tag.rest{background:var(--rest-bg);color:var(--rest)}
+.c ul{margin:4px 0 0;padding-left:18px}
+.c li{margin:1px 0}
+.note{color:var(--muted);font-size:13px}
+h3{font-size:17px;margin:16px 0 8px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600;border-top:0}
+td.n{color:var(--muted);width:24px}
+td.s{white-space:nowrap;font-variant-numeric:tabular-nums}
+.phase{font-size:13px;background:var(--gym-bg);color:var(--ink);border-radius:10px;padding:8px 12px;margin:8px 0}
+.foot{margin:18px 0 6px;font-size:12px;color:var(--muted)}
+.warn{color:var(--warn);font-weight:600}
+@media (max-width:520px){.row{grid-template-columns:52px 1fr}.t{padding-left:10px;font-size:14px}th,td{padding:7px 6px}td.s{white-space:normal}}
+@media print{
+  body{background:#fff;color:#000;font-size:12px}
+  .tabs,.tools{display:none}
+  .wrap{max-width:none;padding:0}
+  .day{display:block;page-break-after:always;break-after:page}
+  .day:last-child{page-break-after:auto}
+  .tl,table,.rules{border-color:#bbb}
+  .row,th,td{border-color:#ccc}
+  header{display:none}
+  .dayhead h2{font-size:20px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>План на неделю: зал · кето · добавки</h1>
+  <p>Старт 12.10.2026 · зал Пн/Ср/Пт в 19:00 · ~2 200 ккал, белок 170–190 г, углеводы ≤ 25 г</p>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="tools">
+  <button onclick="printOne()">🖨 Печать этого дня</button>
+  <button onclick="window.print()">🖨 Печать всей недели</button>
+</div>
+<div id="days"></div>
+<p class="foot">Каждый день: вода 3–3,5 л · шаги 8 000–10 000 · без хлеба, сахара, круп, картошки и газировки · ничего жареного (духовка/тушение/варка) · последняя еда за 3 ч до сна.<br>
+<span class="warn">Стоп и к врачу:</span> боль/давление за грудиной, одышка не по нагрузке, головокружение, острая боль в суставе или пояснице.</p>
+</div>
+
+<script>
+const AM = [
+  {t:"07:30", ttl:"Подъём → туалет → взвешивание", d:"Натощак, в трусах, записать вес."},
+  {t:"07:35", ttl:"Стакан воды 400 мл + щепотка соли", tags:[["pill","Таблетка от рефлюкса — как назначил врач, за 30–60 мин до еды"]]},
+];
+const BF = (menu)=>({t:"08:30", ttl:"Завтрак", food:menu, tags:[["pill","Men's Multi — 1 таблетка"],["pill","Зелёный чай — 1 капсула"],["pill","Омега-3 — 1 капсула"]], d:"Кофе — только сейчас, с едой (максимум 2 чашки, последняя до 15:00)."});
+const WORK = {t:"10–12", ttl:"Вода 0,5–0,7 л", d:"Раз в час встать и пройтись 5 минут."};
+const LUNCH = (menu)=>({t:"13:30", ttl:"Обед — самый большой приём", food:menu, tags:[["pill","Масло чёрного тмина — ½ ч.л. с едой"]]});
+const WALK = {t:"14:00", ttl:"Прогулка 15–20 мин", d:"После еды не садиться и не ложиться сразу (рефлюкс)."};
+const CREA = ["pill","Креатин 5 г (начать с 26.10)"];
+
+function gymDay(menu, w){
+  return [...AM, BF(menu.b), WORK, LUNCH(menu.l), WALK,
+    {t:"16:30", ttl:"Перекус (за 2,5 ч до зала)", food:menu.s},
+    {t:"18:30", ttl:"Перед залом", tags:[["pill","L-карнитин 25 мл в стакане воды"],CREA]},
+    {t:"19:00", ttl:"ЗАЛ — тренировка "+w, tags:[["gym","Программа ниже ↓"]], d:"Вода 0,5–0,7 л глотками. Без отказа и без натуживания."},
+    {t:"20:30", ttl:"Сразу после зала", tags:[["pill","Протеин изолят 30 г в 300 мл воды"]], d:"Пока протеина нет — сразу ужин, рыба 250 г вместо 200 г."},
+    {t:"21:00", ttl:"Лёгкий ужин (не позже 21:00)", food:menu.d},
+    {t:"22:00", ttl:"Магний", tags:[["pill","Магний 200–300 мг"]], d:"Экраны приглушить."},
+    {t:"23:45", ttl:"Сон", d:"Изголовье повыше, лучше на левом боку. 7,5 ч до подъёма."},
+  ];
+}
+function restDay(menu, extra){
+  const r=[...AM, BF(menu.b), WORK, LUNCH(menu.l), WALK,
+    {t:"16:30", ttl:"По желанию: протеин 30 г или 2 варёных яйца", tags:[CREA], d:"Если до ужина сильный голод."},
+    {t:"18:00", ttl:extra||"Прогулка 45–60 мин быстрым шагом", tags:[["rest","Цель — 10 000 шагов за день"]], d:"Тянет на казино → кроссовки и на улицу 20 минут."},
+    {t:"19:30", ttl:"Ужин (не позже 20:30)", food:menu.d},
+    {t:"22:00", ttl:"Магний", tags:[["pill","Магний 200–300 мг"]], d:"Экраны приглушить."},
+    {t:"23:30", ttl:"Сон", d:"Изголовье повыше, лучше на левом боку."},
+  ];
+  return r;
+}
+
+const WARM = "Разминка 8–10 мин: 5 мин эллипс/велосипед спокойно → махи ногами, вращения плеч, «кошка-корова», ягодичный мост по 10 → 1–2 лёгких подхода первого упражнения.";
+const PHASE = "<b>12.10–25.10:</b> 2 рабочих подхода, оставляй 3–4 повтора в запасе (подбираем веса, без геройства).<br><b>С 26.10:</b> 3 подхода, 2 повтора в запасе. Сделал верх диапазона во всех подходах → +2,5 кг (руки/грудь/спина) или +5 кг (ноги).<br><b>30.11–06.12:</b> разгрузка — 2 подхода, веса −10 %.";
+
+const W = {
+ A:[["Жим ногами в тренажёре","3 × 10–12","2 мин"],["Жим гантелей лёжа","3 × 8–10","2 мин"],["Тяга верхнего блока к груди","3 × 10–12","90 с"],["Румынская тяга с гантелями","3 × 10","2 мин"],["Тяга горизонтального блока","3 × 10–12","90 с"],["Паллоф-пресс в кроссовере","3 × 10 / сторона","60 с"],["Ходьба в гору на дорожке: наклон 6–10 %, 4,5–5,5 км/ч","20–25 мин","пульс 120–135"]],
+ B:[["Гоблет-присед с гантелью","3 × 10","2 мин"],["Жим гантелей сидя вверх","3 × 8–10","2 мин"],["Тяга гантели одной рукой с упором","3 × 10 / рука","90 с"],["Сгибание ног в тренажёре","3 × 12","90 с"],["Жим в тренажёре от груди сидя","3 × 10–12","90 с"],["Прогулка фермера с гантелями","3 × 30–40 м","90 с"],["Dead bug («жук»)","3 × 8 / сторона","60 с"],["Велотренажёр ровным темпом","20–25 мин","пульс 120–135"]],
+ C:[["Становая с трэп-грифом (нет — румынская со штангой)","3 × 6–8","2–3 мин"],["Жим гантелей на наклонной 30°","3 × 8–10","2 мин"],["Подтягивания в гравитроне (нет — верхний блок узким хватом)","3 × 6–10","2 мин"],["Зашагивания на платформу / болгарские выпады","3 × 8 / нога","90 с"],["Разведения гантелей в стороны","3 × 12–15","60 с"],["Суперсет: бицепс гантели + трицепс на блоке","3 × 12 + 12","60 с"],["Боковая планка","3 × 20–30 с / сторона","45 с"],["Эллипс","20–25 мин","пульс 120–135"]],
+};
+
+const DAYS = [
+ {k:"Пн",name:"Понедельник",gym:"А",menu:{
+   b:["Омлет из 4 яиц в духовке (+5 г масла)","Сыр Брест-Литовск 30 г","Огурец 150 г, зелень"],
+   l:["Куриное бедро с кожей 300 г запечённое (паприка, сушёный чеснок, соль)","Брокколи 200 г + 10 г сливочного масла"],
+   s:["Творог 5 % 200 г + 30 мл сливок 20 %"],
+   d:["Стейк форели 200 г в духовке","Цветная капуста 200 г + 5 г масла","Сыр 30 г"]}},
+ {k:"Вт",name:"Вторник",menu:{
+   b:["4 варёных яйца","Слабосолёная форель 50 г","Огурец, зелень"],
+   l:["Куриное филе 250 г, тушёное в 50 мл сливок с паприкой","Брокколи 200 г"],
+   d:["Творог 5 % 250 г","Сыр творожный 30 г + зелень"]}},
+ {k:"Ср",name:"Среда",gym:"Б",menu:{
+   b:["Омлет из 4 яиц в духовке","Сыр 30 г","Зелень, огурец"],
+   l:["Куриное бедро с кожей 300 г запечённое","Тушёная белокочанная капуста 200 г + 10 г масла"],
+   s:["Творог 5 % 200 г"],
+   d:["Куриное филе 200 г запечённое","Цветная капуста 200 г","Сыр 30 г"]}},
+ {k:"Чт",name:"Четверг",menu:{
+   b:["4 яйца «в мешочек»","Сыр 30 г","Огурец"],
+   l:["Свиная лопатка или говядина 250 г тушёная","Кабачок 200 г тушёный"],
+   d:["Форель 250 г в духовке","Огурец + зелень"]}},
+ {k:"Пт",name:"Пятница",gym:"В",menu:{
+   b:["Омлет из 4 яиц в духовке","Слабосолёная форель 50 г","Огурец"],
+   l:["Куриное бедро с кожей 300 г запечённое","Брокколи 200 г + 10 г масла"],
+   s:["Творог 5 % 200 г + 30 мл сливок"],
+   d:["Котлеты из куриного филе 200 г в духовке (фарш + яйцо, без хлеба)","Цветная капуста 200 г"]}},
+ {k:"Сб",name:"Суббота",menu:{
+   b:["Запеканка в духовке: 4 яйца + 100 г творога + 30 г сыра"],
+   l:["Говядина или свинина 250 г тушёная","Овощи 200 г (брокколи/цветная/кабачок)"],
+   d:["Форель 250 г","Салат: огурец + зелень + 1 ст.л. оливкового масла"]}},
+ {k:"Вс",name:"Воскресенье",extra:"Длинная прогулка 60–90 мин / бассейн / велосипед — в удовольствие",menu:{
+   b:["Омлет из 4 яиц","Сыр 30 г","Огурец"],
+   l:["Куриное бедро с кожей 300 г запечённое","Брокколи 200 г + 10 г масла"],
+   d:["Творог 5 % 250 г","Грецкие орехи 20 г"]},
+   prep:"<b>Заготовка на неделю (40 мин):</b> запечь 1,5–2 кг бедра/филе на 3 дня, сварить 10 яиц, переложить рыбу на понедельник из морозилки в холодильник. Пустой холодильник = главная причина срывов."},
+];
+
+function esc(s){return s}
+function rowHTML(r){
+  let h=`<div class="row"><div class="t">${r.t}</div><div class="c"><div class="ttl">${r.ttl}</div>`;
+  if(r.food) h+=`<ul>${r.food.map(f=>`<li>${f}</li>`).join("")}</ul>`;
+  if(r.tags) h+=r.tags.map(([c,x])=>`<span class="tag ${c}">${c==="pill"?"💊 ":c==="gym"?"🏋 ":c==="rest"?"🚶 ":""}${x}</span>`).join("");
+  if(r.d) h+=`<div class="note">${r.d}</div>`;
+  return h+`</div></div>`;
+}
+const tabs=document.getElementById("tabs"), box=document.getElementById("days");
+DAYS.forEach((d,i)=>{
+  const rows = d.gym? gymDay(d.menu, d.gym) : restDay(d.menu, d.extra);
+  let h=`<section class="day" id="d${i}"><div class="dayhead"><h2>${d.name}</h2>`+
+    (d.gym?`<span class="badge gym">🏋 Зал 19:00 · тренировка ${d.gym}</span>`:`<span class="badge rest">🚶 Отдых · 10 000 шагов</span>`)+`</div>`+
+    `<div class="rules"><b>Сегодня:</b> вода 3–3,5 л · соль +1 ч.л. к обычной · без хлеба, сахара и газировки · ничего жареного · еда за 3 ч до сна</div>`+
+    `<div class="tl">${rows.map(rowHTML).join("")}</div>`;
+  if(d.gym){
+    h+=`<h3>🏋 Тренировка ${d.gym}</h3><div class="phase">${PHASE}</div><p class="note">${WARM}</p>`+
+      `<table><tr><th>#</th><th>Упражнение</th><th>Подходы × повторы</th><th>Отдых</th></tr>`+
+      W[d.gym].map((e,j)=>`<tr><td class="n">${j+1}</td><td>${e[0]}</td><td class="s">${e[1]}</td><td class="s">${e[2]}</td></tr>`).join("")+`</table>`+
+      `<p class="note">Печёт лёжа → жим в тренажёре сидя вместо жима лёжа, «жук» вместо планки. Записывай вес × повторы каждого подхода в заметки телефона.</p>`;
+  }
+  if(d.prep) h+=`<div class="rules" style="margin-top:12px">${d.prep}</div>`;
+  box.insertAdjacentHTML("beforeend",h+`</section>`);
+  const b=document.createElement("button"); b.className=d.gym?"":"rest"; b.innerHTML=`${d.k}<small>${d.gym?"зал "+d.gym:"отдых"}</small>`;
+  b.onclick=()=>show(i); tabs.appendChild(b);
+});
+function show(i){
+  document.querySelectorAll(".day").forEach((s,j)=>s.classList.toggle("on",j===i));
+  [...tabs.children].forEach((b,j)=>b.classList.toggle("on",j===i));
+  try{localStorage.setItem("fp-day",i)}catch(e){}
+  cur=i;
+}
+let cur=(new Date().getDay()+6)%7; show(cur);
+function printOne(){
+  const st=document.createElement("style");
+  st.textContent=`@media print{.day{display:none!important}#d${cur}{display:block!important}}`;
+  document.head.appendChild(st); window.print(); setTimeout(()=>st.remove(),500);
+}
+</script>
+</body>
+</html>
