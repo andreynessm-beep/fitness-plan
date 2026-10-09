@@ -188,7 +188,7 @@ DAYS.forEach((d,i)=>{
   if(d.gym){
     h+=`<h3>🏋 Тренировка ${d.gym}</h3><div class="phase">${PHASE}</div><p class="note">${WARM}</p>`+
       `<table><tr><th>#</th><th>Упражнение</th><th>Подходы × повторы</th><th>Отдых</th></tr>`+
-      W[d.gym].map((e,j)=>`<tr><td class="n">${j+1}</td><td>${e[0]}</td><td class="s">${e[1]}</td><td class="s">${e[2]}</td></tr>`).join("")+`</table>`+
+      W[{"А":"A","Б":"B","В":"C"}[d.gym]].map((e,j)=>`<tr><td class="n">${j+1}</td><td>${e[0]}</td><td class="s">${e[1]}</td><td class="s">${e[2]}</td></tr>`).join("")+`</table>`+
       `<p class="note">Печёт лёжа → жим в тренажёре сидя вместо жима лёжа, «жук» вместо планки. Записывай вес × повторы каждого подхода в заметки телефона.</p>`;
   }
   if(d.prep) h+=`<div class="rules" style="margin-top:12px">${d.prep}</div>`;
