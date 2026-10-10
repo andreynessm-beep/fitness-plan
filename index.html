@@ -258,8 +258,6 @@ const P={
 const STEPS=["6 000","8 000","10 000","10 000","10 000","10 000","10 000","10 000"];
 
 const EV={
- "2026-10-10":[["🎂","Выходные перед стартом","Отмечаешь день рождения. Пиво допить или отдать — в понедельник дома ни капли."]],
- "2026-10-11":[["🎂","С днём рождения! 28","Днём — заготовка на пн–вт: запечь 1,5–2 кг курицы, сварить 10 яиц, форель из морозилки в холодильник. Будильники на 08:10 и 22:05. Вечером закончить праздновать."]],
  "2026-10-12":[["🚀","День 1 программы","Первый день кето и первая тренировка. Алкоголь — ноль до 12.12."]],
  "2026-10-14":[["📦","Приезжает протеин","Если приехал — пьёшь сразу после зала уже сегодня."]],
  "2026-10-18":[["📊","Первый недельный отчёт","Вечером: скрин весов за неделю + как прошли 3 тренировки."]],
@@ -409,16 +407,17 @@ function preStartHTML(d){
 }
 
 /* ===== ВИДЫ ===== */
-let SEL=TODAY;
+const FIRST=()=>TODAY<START?START:TODAY;
+let SEL=FIRST();
 function renderDay(){
   const mon=addD(SEL,-wdi(SEL));
-  let h=`<div class="dnav"><button onclick="go(-1)">← день</button><button onclick="go(1)">день →</button><button class="today" onclick="SEL=TODAY;renderDay()">Сегодня</button></div><div class="strip">`;
+  let h=`<div class="dnav"><button onclick="go(-1)">← день</button><button onclick="go(1)">день →</button><button class="today" onclick="SEL=FIRST();renderDay()">${TODAY<START?"К старту":"Сегодня"}</button></div><div class="strip">`;
   for(let i=0;i<7;i++){const d=addD(mon,i),g=inProg(d)?GYM[i]:null;h+=`<button class="${g?"g ":""}${+d===+SEL?"sel ":""}${+d===+TODAY?"now ":""}${EV[key(d)]?"ev":""}" onclick="pick('${key(d)}')"><small>${WDS[i]}</small><b>${d.getDate()}</b><small class="t">${g?"зал "+g:(d<START?"—":"отдых")}</small></button>`;}
   h+=`</div><div class="tools"><button onclick="printDays([SEL])">🖨 Печать дня</button><button onclick="printWeek()">🖨 Печать недели</button></div>`;
-  h+=SEL<START?preStartHTML(SEL):dayHTML(SEL);
+  h+=dayHTML(SEL);
   document.getElementById("v-day").innerHTML=h;
 }
-function go(n){SEL=addD(SEL,n);renderDay();window.scrollTo(0,0);}
+function go(n){SEL=addD(SEL,n);if(SEL<START)SEL=START;renderDay();window.scrollTo(0,0);}
 function pick(k){SEL=fromKey(k);show("day");}
 
 function renderCal(){
@@ -429,7 +428,7 @@ function renderCal(){
     for(let i=0;i<wdi(first);i++) h+=`<div class="blank"></div>`;
     for(let dd=1;dd<=days;dd++){
       const d=new Date(y,m,dd), g=GYM[wdi(d)], k=key(d), e=EV[k], ip=inProg(d);
-      h+=`<button class="${g&&ip?"g ":""}${!ip&&d>END?"out ":""}${+d===+TODAY?"now ":""}" onclick="pick('${k}')" title="${e?e[0][1]:""}"><b>${dd}</b><small>${g&&ip?"зал "+g:""}</small>${e?`<div style="margin-top:2px">${e[0][0]}</div>`:""}</button>`;
+      h+=`<button class="${g&&ip?"g ":""}${!ip?"out ":""}${+d===+TODAY?"now ":""}" ${d<START?"disabled":`onclick="pick('${k}')"`} title="${e?e[0][1]:""}"><b>${dd}</b><small>${g&&ip?"зал "+g:""}</small>${e?`<div style="margin-top:2px">${e[0][0]}</div>`:""}</button>`;
     }
     h+=`</div></div>`;
   });
