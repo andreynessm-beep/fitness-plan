@@ -5,330 +5,496 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <meta name="color-scheme" content="light">
-<title>План на неделю</title>
+<title>Мой план</title>
 <style>
 :root{
-  --bg:#ffffff;--ink:#14161a;--muted:#626a76;--line:#e4e7ec;--soft:#f7f8fa;
-  --gym:#2459d6;--gym-bg:#eaf0fe;--rest:#178a55;--rest-bg:#e6f5ed;
-  --food:#b45f0c;--food-bg:#fdf3e6;--pill:#6d36c4;--pill-bg:#f2ecfc;--warn:#b42318;
+  --bg:#ffffff;--ink:#11131a;--muted:#6b7280;--line:#e8ebf1;--soft:#f6f7fb;
+  --gym:#2f5bea;--gym-bg:#edf2ff;--rest:#139466;--rest-bg:#e7f7ef;
+  --food:#d9730d;--food-bg:#fff4e8;--pill:#7c3aed;--pill-bg:#f3edff;
+  --ev:#b7791f;--ev-bg:#fff7e0;--warn:#c0362c;--warn-bg:#fdeeec;--msg:#fff8db;
+  --shadow:0 1px 2px rgba(17,19,26,.04),0 4px 14px rgba(17,19,26,.06);
+  --r:16px;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.wrap{max-width:900px;margin:0 auto;padding:16px}
-header h1{font-size:21px;margin:2px 0}
-header p{margin:0;color:var(--muted);font-size:13px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 48px}
+button{font:inherit;color:inherit}
+a{color:var(--gym)}
 
-.tabs{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:14px 0 8px}
-.tabs button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:8px 2px;font:700 15px system-ui;cursor:pointer}
-.tabs button small{display:block;font-weight:500;font-size:11px;color:var(--muted)}
-.tabs button.g small{color:var(--gym)}
-.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-.tabs button.on small{color:#d6d9df}
-.tools{display:flex;gap:8px;justify-content:flex-end;margin-bottom:6px}
-.tools button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+/* меню */
+.nav{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin:0 -16px 16px;padding:10px 16px}
+.nav .in{max-width:880px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--soft);padding:4px;border-radius:14px}
+.nav button{border:0;background:transparent;border-radius:11px;padding:9px 4px;font-weight:700;cursor:pointer;font-size:14px;color:var(--muted)}
+.nav button.on{background:#fff;color:var(--ink);box-shadow:var(--shadow)}
 
-.day{display:none}.day.on{display:block}
-.dayhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:6px 0 14px}
-.dayhead h2{margin:0;font-size:26px}
-.badge{padding:3px 10px;border-radius:999px;font-size:13px;font-weight:700}
-.badge.gym{background:var(--gym-bg);color:var(--gym)}
-.badge.rest{background:var(--rest-bg);color:var(--rest)}
+/* навигация по дням */
+.dnav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.dnav button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 14px;cursor:pointer;font-weight:700;font-size:14px}
+.dnav .today{margin-left:auto;background:var(--ink);color:#fff;border-color:var(--ink)}
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px}
+.strip button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:8px 0 7px;cursor:pointer;line-height:1.15;position:relative}
+.strip button b{display:block;font-size:17px;margin:2px 0}
+.strip button small{font-size:11px;color:var(--muted);font-weight:600}
+.strip button.g{background:var(--gym-bg);border-color:#d6e0ff}
+.strip button.g .t{color:var(--gym)}
+.strip button.sel{background:var(--ink);border-color:var(--ink);color:#fff}
+.strip button.sel small{color:#c9ced8}
+.strip button.now:not(.sel){box-shadow:0 0 0 2px var(--gym) inset}
+.strip button.ev::after{content:"";position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--ev)}
 
-.sec{margin:0 0 18px}
-.sec h3{display:flex;align-items:center;gap:8px;font-size:16px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em}
-.sec h3 .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--ink);color:#fff;font-size:12px}
+/* шапка дня */
+.hero{border-radius:22px;padding:20px 20px 18px;color:#fff;margin-bottom:12px;background:linear-gradient(135deg,#2f5bea,#6a3df0);box-shadow:0 8px 24px rgba(47,91,234,.25)}
+.hero.rest{background:linear-gradient(135deg,#119b6a,#0e8a99);box-shadow:0 8px 24px rgba(17,155,106,.22)}
+.hero.pre{background:linear-gradient(135deg,#f08c2e,#e2557a);box-shadow:0 8px 24px rgba(226,85,122,.22)}
+.hero .top{font-size:13px;font-weight:700;opacity:.85;text-transform:uppercase;letter-spacing:.06em}
+.hero h2{margin:4px 0 10px;font-size:30px;line-height:1.1;font-weight:800}
+.hero .chips{display:flex;flex-wrap:wrap;gap:6px}
+.hero .chips span{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);padding:4px 10px;border-radius:999px;font-size:13px;font-weight:700}
+.prog{margin-top:14px}
+.prog .bar{height:8px;border-radius:99px;background:rgba(255,255,255,.25);overflow:hidden}
+.prog .bar i{display:block;height:100%;background:#fff;border-radius:99px}
+.prog .lbl{display:flex;justify-content:space-between;font-size:12px;font-weight:700;opacity:.9;margin-top:6px}
 
-/* 1. распорядок */
-.tl{border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.tl div{display:grid;grid-template-columns:58px 26px 1fr 22px;align-items:center;padding:7px 10px;border-top:1px solid var(--line)}
-.tl div:first-child{border-top:0}
-.tl b{font-variant-numeric:tabular-nums}
-.tl i{font-style:normal;text-align:center}
-.tl .k{width:16px;height:16px;border:1.5px solid #b9bfc8;border-radius:4px;justify-self:end}
-.tl .gymrow{background:var(--gym-bg);font-weight:700}
-.tl .walkrow{background:var(--rest-bg);font-weight:700}
-.tl .msgrow{background:#fff6d9;font-weight:700}
-.msgs{display:grid;gap:8px}
-.msg{border:1px solid #f0dfa8;background:#fffbea;border-radius:12px;padding:10px 12px}
-.msg .h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
-.msg .h b{font-size:14px}
-.msg .h em{font-style:normal;font-size:13px;color:var(--food);font-weight:700}
-.msg pre{margin:0;white-space:pre-wrap;font:14px/1.5 ui-monospace,Consolas,monospace;color:var(--ink)}
-.msg button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:3px 10px;font-size:12px;cursor:pointer}
-.msg .note{font-size:12px;color:var(--muted);margin-top:4px}
-@media print{.msg button{display:none}}
+/* плитки */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;box-shadow:var(--shadow)}
+.tile .ic{font-size:20px}
+.tile b{display:block;font-size:16px;margin-top:2px}
+.tile small{color:var(--muted);font-size:12px;font-weight:600}
 
-/* 2. еда */
+/* события */
+.evs{display:grid;gap:8px;margin-bottom:16px}
+.evc{display:flex;gap:12px;align-items:flex-start;border:1px solid #f2dfa6;background:var(--ev-bg);border-radius:var(--r);padding:12px 14px}
+.evc .e{font-size:24px;line-height:1}
+.evc b{display:block;margin-bottom:2px}
+.evc span{font-size:14px;color:#5c4a1c}
+
+/* секции */
+.sec{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;margin:0 0 14px;box-shadow:var(--shadow)}
+.sh{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.sh .ic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:var(--soft)}
+.sh h3{margin:0;font-size:17px;font-weight:800}
+.sh .cnt{margin-left:auto;font-size:13px;font-weight:700;color:var(--muted);background:var(--soft);padding:3px 10px;border-radius:99px}
+.sh .cnt.done{background:var(--rest-bg);color:var(--rest)}
+
+/* таймлайн */
+.tl{position:relative}
+.tl::before{content:"";position:absolute;left:61px;top:10px;bottom:10px;width:2px;background:var(--line)}
+.tr{display:grid;grid-template-columns:50px 24px 1fr 28px;gap:0 10px;align-items:center;padding:7px 0;position:relative;cursor:pointer}
+.tr .t{font-weight:800;font-variant-numeric:tabular-nums;font-size:14px;text-align:right;color:var(--muted)}
+.tr .dot{width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;z-index:1}
+.tr .x{font-size:14.5px}
+.tr .x i{font-style:normal;margin-right:4px}
+.tr .ck{width:22px;height:22px;border-radius:7px;border:2px solid #c8cdd6;justify-self:end;display:grid;place-items:center;font-size:13px;color:#fff;font-weight:900}
+.tr.gym .x{background:var(--gym-bg);color:var(--gym);font-weight:800;padding:6px 10px;border-radius:10px}
+.tr.gym .dot{border-color:var(--gym);background:var(--gym)}
+.tr.walk .dot{border-color:var(--rest)}
+.tr.msg .x{background:var(--msg);font-weight:800;padding:6px 10px;border-radius:10px}
+.tr.msg .dot{border-color:#e4b100}
+.tr.ev .x{background:var(--ev-bg);font-weight:800;padding:6px 10px;border-radius:10px}
+.tr.ev .dot{border-color:var(--ev)}
+.tr.done .x{opacity:.45;text-decoration:line-through}
+.tr.done .ck{background:var(--rest);border-color:var(--rest)}
+.tr.done .ck::after{content:"✓"}
+
+/* еда */
 .meals{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.meal{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
-.meal .h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
-.meal .h span{font-weight:700}
-.meal .h em{font-style:normal;font-size:13px;color:var(--food);font-weight:700}
-.meal ul{margin:0;padding-left:18px}
-.meal li{margin:2px 0}
-.meal.opt{background:var(--soft)}
+.meal{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:#fff;position:relative;overflow:hidden}
+.meal::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--food)}
+.meal .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.meal .h span{font-weight:800}
+.meal .h em{font-style:normal;font-size:12px;color:var(--food);font-weight:800;background:var(--food-bg);padding:2px 8px;border-radius:99px}
+.meal ul{margin:0;padding-left:18px}.meal li{margin:3px 0;font-size:14.5px}
+.meal.opt{background:var(--soft)}.meal.opt::before{background:#c8cdd6}
+.drink{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.drink span{font-size:13px;font-weight:700;padding:5px 10px;border-radius:99px}
+.drink .ok{background:var(--rest-bg);color:var(--rest)}
+.drink .no{background:var(--warn-bg);color:var(--warn)}
 
-/* 3. добавки */
-table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
-th,td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
-th{font-size:12px;color:var(--muted);font-weight:700;border-top:0;background:var(--soft)}
-td.tm{white-space:nowrap;font-weight:700;font-variant-numeric:tabular-nums;width:110px}
-td.tm small{display:block;font-weight:500;color:var(--muted)}
-.pill{color:var(--pill);font-weight:600}
+/* добавки */
+.sup{display:grid;gap:8px}
+.su{display:grid;grid-template-columns:78px 1fr;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:9px 12px}
+.su .t{font-weight:800;font-size:14px}
+.su .t small{display:block;font-weight:600;color:var(--muted);font-size:11.5px}
+.su .p{display:flex;flex-wrap:wrap;gap:6px}
+.su .p span{background:var(--pill-bg);color:var(--pill);font-weight:700;font-size:13.5px;padding:4px 10px;border-radius:99px}
+.su .p em{font-style:normal;color:var(--muted);font-size:13px;align-self:center}
 
-/* 4. тренировка */
-.phase{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
-.phase div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px}
-.phase b{display:block;font-size:12px;color:var(--gym)}
-.warm{font-size:13px;color:var(--muted);margin:0 0 8px}
-td.no{width:28px;color:var(--muted);font-weight:700}
-td.s{white-space:nowrap;font-variant-numeric:tabular-nums}
-td.wt{width:90px}
-td.wt span{display:block;border-bottom:1px solid #c9ced6;height:18px}
-.tips{font-size:13px;color:var(--muted);margin:8px 0 0}
-.box{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--soft);font-size:14px}
+/* тренировка */
+.phase{display:flex;gap:10px;align-items:center;background:var(--gym-bg);border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:14px}
+.phase b{color:var(--gym)}
+.ex{display:grid;gap:8px}
+.exr{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.exr .no{width:30px;height:30px;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-weight:800;color:var(--muted)}
+.exr .nm{font-weight:700;font-size:14.5px;line-height:1.3}
+.exr .nm small{display:block;color:var(--muted);font-weight:600;font-size:12.5px;margin-top:2px}
+.exr .wt{background:var(--gym);color:#fff;font-weight:800;border-radius:12px;padding:7px 12px;font-size:15px;white-space:nowrap;text-align:center}
+.exr.cardio .wt{background:var(--rest)}
+.warm{font-size:13.5px;color:var(--muted);margin:10px 0 0}
 
+/* сообщения */
+.msgs{display:grid;gap:10px}
+.mc{border:1px solid #f1e3a6;background:var(--msg);border-radius:var(--r);padding:12px 14px}
+.mc .h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.mc .h b{font-size:15px}
+.mc .h em{font-style:normal;color:var(--food);font-weight:800;margin-left:6px}
+.mc pre{margin:0;white-space:pre-wrap;font:14px/1.6 ui-monospace,Consolas,monospace;background:rgba(255,255,255,.6);border-radius:10px;padding:8px 10px}
+.mc button{border:0;background:var(--ink);color:#fff;border-radius:9px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer}
+
+/* общие */
+.box{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--soft);font-size:14px;margin-top:10px}
+.box.red{background:var(--warn-bg);border-color:#f6c9c3}
+.note{font-size:13px;color:var(--muted);margin:8px 0 0}
 .rules{display:flex;flex-wrap:wrap;gap:6px}
-.rules span{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;background:#fff}
-details.wplan{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0 14px}details.wplan summary{font-weight:700;cursor:pointer}details.wplan h4{margin:14px 0 6px}.cur td{background:#eaf0fe;font-weight:700}.scroll{overflow-x:auto}.scroll table{min-width:620px}
-.foot{margin:16px 0 4px;font-size:12px;color:var(--muted)}
-.warn{color:var(--warn);font-weight:700}
+.rules span{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600}
+table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14px;background:#fff}
+th,td{text-align:left;padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:800;border-top:0;background:var(--soft)}
+td.s{white-space:nowrap}
+.scroll{overflow-x:auto}.scroll table{min-width:640px}
+tr.cur td{background:var(--gym-bg);font-weight:800}
+td.cw{background:var(--gym-bg);font-weight:800;color:var(--gym)}
+h4{margin:18px 0 8px;font-size:16px;font-weight:800}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:#fff;box-shadow:var(--shadow)}
+.card h4{margin:0 0 6px}
+.card ul{margin:0;padding-left:18px}
+.yes h4{color:var(--rest)}.no h4{color:var(--warn)}
+.tools{display:flex;gap:8px;justify-content:flex-end;margin:0 0 12px}
+.tools button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:700}
 
-@media (max-width:600px){
-  .tabs{gap:4px}.tabs button{font-size:14px;padding:7px 0}.tabs button small{font-size:10px}
-  .meals{grid-template-columns:1fr}
-  .phase{grid-template-columns:1fr}
-  .tl div{grid-template-columns:50px 24px 1fr 20px;padding:7px 8px}
-  th,td{padding:7px 6px}td.tm{width:auto}td.wt{display:none}th.wt{display:none}
-  td.s{white-space:normal}
+/* календарь */
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);margin-bottom:12px;font-weight:600}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px;vertical-align:-1px}
+.month{margin-bottom:20px}
+.month h3{margin:0 0 8px;font-size:18px;font-weight:800}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal .wd{font-size:11px;color:var(--muted);text-align:center;font-weight:800}
+.cal button{border:1px solid var(--line);background:#fff;border-radius:12px;min-height:58px;padding:5px 6px;cursor:pointer;text-align:left;font-size:11.5px;line-height:1.15;position:relative}
+.cal button b{font-size:15px;display:block}
+.cal button.g{background:var(--gym-bg);border-color:#d6e0ff}
+.cal button.g small{color:var(--gym);font-weight:800}
+.cal button.out{opacity:.4}
+.cal button.now{box-shadow:0 0 0 2px var(--ink) inset}
+.cal .blank{min-height:58px}
+
+#print{display:none}
+@media (max-width:640px){
+  .meals,.grid2{grid-template-columns:1fr}
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .hero h2{font-size:25px}
+  .sec{padding:14px 12px;border-radius:18px}
+  .tl::before{left:53px}
+  .tr{grid-template-columns:42px 24px 1fr 24px;gap:0 8px}
+  .su{grid-template-columns:64px 1fr}
+  th,td{padding:7px 6px}
+  .cal button{min-height:50px;font-size:10px;padding:4px}.cal button b{font-size:13px}
+  .strip button b{font-size:15px}
 }
 @media print{
-  @page{size:A4;margin:10mm}
+  @page{size:A4;margin:9mm}
   body{font-size:11px}
-  .tabs,.tools,header,details.wplan{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0 14px}details.wplan summary{font-weight:700;cursor:pointer}details.wplan h4{margin:14px 0 6px}.cur td{background:#eaf0fe;font-weight:700}.scroll{overflow-x:auto}.scroll table{min-width:620px}
-.foot{display:none}
-  .wrap{max-width:none;padding:0}
-  .day{display:block;break-after:page;page-break-after:always}
-  .day:last-child{break-after:auto;page-break-after:auto}
-  .dayhead h2{font-size:20px}.dayhead{margin-bottom:8px}
-  .sec{margin-bottom:9px;break-inside:avoid}
-  .sec h3{font-size:12px;margin-bottom:4px}
-  .tl div{padding:3px 8px}
-  .meal{padding:6px 8px}.meals{gap:6px}
-  th,td{padding:4px 6px}table{font-size:11px}
-  .phase div{padding:4px 6px;font-size:10px}
+  .nav,.pv{display:none!important}
+  #print{display:block}
+  .wrap{padding:0;max-width:none}
+  .mc button,.tools,.dnav,.strip{display:none}
+  #print .pday{break-after:page;page-break-after:always}
+  #print .pday:last-child{break-after:auto;page-break-after:auto}
+  .sec{box-shadow:none;padding:8px 10px;margin-bottom:6px;break-inside:avoid}
+  .hero{box-shadow:none;padding:10px 14px}.hero h2{font-size:20px}
+  .tiles{display:none}
+  .tr{padding:2px 0}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="wrap">
-<header>
-  <h1>План на неделю: зал · кето · добавки</h1>
-  <p>Старт 12.10.2026 · зал Пн / Ср / Пт в 18:30 · ~2 200 ккал · белок 170–190 г · углеводы до 25 г</p>
-</header>
-<div class="tabs" id="tabs"></div>
-<div class="tools">
-  <button onclick="printOne()">🖨 Печать этого дня</button>
-  <button onclick="window.print()">🖨 Вся неделя</button>
-</div>
-<details class="wplan"><summary>📅 План по неделям: 12.10 – 06.12 и дальше</summary>
-<div id="wplan"></div></details>
-<div id="days"></div>
-<p class="foot"><span class="warn">Стоп и к врачу:</span> боль или давление за грудиной, одышка не по нагрузке, головокружение, острая боль в суставе или пояснице.</p>
+  <div class="nav"><div class="in">
+    <button data-v="day">📅 День</button>
+    <button data-v="cal">🗓 Календарь</button>
+    <button data-v="prog">🏋️ Программа</button>
+    <button data-v="rules">📋 Правила</button>
+  </div></div>
+  <div id="v-day" class="pv"></div>
+  <div id="v-cal" class="pv"></div>
+  <div id="v-prog" class="pv"></div>
+  <div id="v-rules" class="pv"></div>
+  <div id="print"></div>
 </div>
 
 <script>
-const DAYS = [
- {k:"Пн",name:"Понедельник",gym:"А",menu:{
-   b:["Омлет из 4 яиц в духовке (+5 г масла)","Сыр Брест-Литовск 30 г","Огурец 150 г, зелень"],
-   l:["Куриное бедро с кожей 300 г, запечённое (паприка, сушёный чеснок, соль)","Брокколи 200 г + 10 г сливочного масла"],
-   s:["Творог 5 % 200 г + 30 мл сливок 20 %"],
-   d:["Стейк форели 200 г в духовке","Цветная капуста 200 г + 5 г масла","Сыр 30 г"]}},
- {k:"Вт",name:"Вторник",menu:{
-   b:["4 варёных яйца","Слабосолёная форель 50 г","Огурец, зелень"],
-   l:["Куриное филе 250 г, тушёное в 50 мл сливок с паприкой","Брокколи 200 г"],
-   d:["Творог 5 % 250 г","Сыр творожный 30 г + зелень"]}},
- {k:"Ср",name:"Среда",gym:"Б",menu:{
-   b:["Омлет из 4 яиц в духовке","Сыр 30 г","Огурец, зелень"],
-   l:["Куриное бедро с кожей 300 г, запечённое","Тушёная белокочанная капуста 200 г + 10 г масла"],
-   s:["Творог 5 % 200 г"],
-   d:["Куриное филе 200 г, запечённое","Цветная капуста 200 г","Сыр 30 г"]}},
- {k:"Чт",name:"Четверг",menu:{
-   b:["4 яйца «в мешочек»","Сыр 30 г","Огурец"],
-   l:["Свиная лопатка или говядина 250 г, тушёная","Кабачок 200 г, тушёный"],
-   d:["Форель 250 г в духовке","Огурец + зелень"]}},
- {k:"Пт",name:"Пятница",gym:"В",menu:{
-   b:["Омлет из 4 яиц в духовке","Слабосолёная форель 50 г","Огурец"],
-   l:["Куриное бедро с кожей 300 г, запечённое","Брокколи 200 г + 10 г масла"],
-   s:["Творог 5 % 200 г + 30 мл сливок"],
-   d:["Котлеты из куриного филе 200 г в духовке (фарш + яйцо, без хлеба)","Цветная капуста 200 г"]}},
- {k:"Сб",name:"Суббота",menu:{
-   b:["Запеканка в духовке: 4 яйца + 100 г творога + 30 г сыра"],
-   l:["Говядина или свинина 250 г, тушёная","Овощи 200 г (брокколи / цветная / кабачок)"],
-   d:["Форель 250 г","Салат: огурец + зелень + 1 ст. л. оливкового масла"]}},
- {k:"Вс",name:"Воскресенье",walk:"Пешком за продуктами на неделю с рюкзаком (40–60 мин) — потом заготовка",menu:{
-   b:["Омлет из 4 яиц","Сыр 30 г","Огурец"],
-   l:["Куриное бедро с кожей 300 г, запечённое","Брокколи 200 г + 10 г масла"],
-   d:["Творог 5 % 250 г","Грецкие орехи 20 г"]},
-   prep:"<b>🥘 Заготовка на неделю (40 мин):</b> запечь 1,5–2 кг бедра или филе на 3 дня, сварить 10 яиц, переложить рыбу на понедельник из морозилки в холодильник. Пустой холодильник — главная причина срывов."},
+/* ===== ДАННЫЕ ===== */
+const START=new Date(2026,9,12), END=new Date(2026,11,6), ALCO_END=new Date(2026,11,12);
+const WDN=["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
+const WDS=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+const MON=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+const MONN=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+const GYM={0:"А",2:"Б",4:"В"};
+
+const MENU=[
+ {b:["Омлет из 4 яиц в духовке (+5 г масла)","Сыр 30 г","Огурец 150 г, зелень"],l:["Куриное бедро с кожей 300 г, запечённое (паприка, сушёный чеснок, соль)","Брокколи 200 г + 10 г масла"],s:["Творог 5 % 200 г + 30 мл сливок 20 %"],d:["Стейк форели 200 г в духовке","Цветная капуста 200 г + 5 г масла","Сыр 30 г"]},
+ {b:["4 варёных яйца","Слабосолёная форель 50 г","Огурец, зелень"],l:["Куриное филе 250 г, тушёное в 50 мл сливок с паприкой","Брокколи 200 г"],d:["Творог 5 % 250 г","Сыр творожный 30 г + зелень"]},
+ {b:["Омлет из 4 яиц в духовке","Сыр 30 г","Огурец, зелень"],l:["Куриное бедро с кожей 300 г, запечённое","Тушёная белокочанная капуста 200 г + 10 г масла"],s:["Творог 5 % 200 г"],d:["Куриное филе 200 г, запечённое","Цветная капуста 200 г","Сыр 30 г"]},
+ {b:["4 яйца «в мешочек»","Сыр 30 г","Огурец"],l:["Свиная лопатка или говядина 250 г, тушёная","Кабачок 200 г, тушёный"],d:["Форель 250 г в духовке","Огурец + зелень"]},
+ {b:["Омлет из 4 яиц в духовке","Слабосолёная форель 50 г","Огурец"],l:["Куриное бедро с кожей 300 г, запечённое","Брокколи 200 г + 10 г масла"],s:["Творог 5 % 200 г + 30 мл сливок"],d:["Котлеты из куриного филе 200 г в духовке (фарш + яйцо, без хлеба)","Цветная капуста 200 г"]},
+ {b:["Запеканка в духовке: 4 яйца + 100 г творога + 30 г сыра"],l:["Говядина или свинина 250 г, тушёная","Овощи 200 г (брокколи / цветная / кабачок)"],d:["Форель 250 г","Салат: огурец + зелень + 1 ст. л. оливкового масла"]},
+ {b:["Омлет из 4 яиц","Сыр 30 г","Огурец"],l:["Куриное бедро с кожей 300 г, запечённое","Брокколи 200 г + 10 г масла"],d:["Творог 5 % 250 г","Грецкие орехи 20 г"]},
 ];
 
-const W = {
- "А":[["Присед со штангой","4 × 5–6","3 мин","60 кг"],["Жим штанги лёжа","4 × 5–6","3 мин","60 кг"],["Тяга штанги в наклоне","3 × 8–10","2 мин","50 кг"],["Жим гантелей сидя вверх","3 × 8–10","90 с","2 × 16 кг"],["Подъём коленей в висе (турник или брусья)","3 × 10–12","60 с","свой вес"],["Кардио: дорожка в гору, наклон 6–10 %, 4,5–5,5 км/ч","20–25 мин","пульс 120–135","—"]],
- "Б":[["Становая тяга (классика)","3 × 5","3 мин","70 кг"],["Жим гантелей на наклонной скамье 30°","3 × 8–10","2 мин","2 × 20 кг"],["Подтягивания (не получается — тяга верхнего блока)","3 × 6–10","2 мин","свой вес / блок 50 кг"],["Выпады с гантелями","3 × 10 на ногу","90 с","без веса → 2 × 8–10 кг"],["Отжимания от пола (брусья — с 26.10)","3 × 10–15","90 с","свой вес"],["Кардио: велотренажёр ровным темпом","20–25 мин","пульс 120–135","—"]],
- "В":[["Гоблет-присед с гантелью","3 × 10–12","2 мин","20 кг"],["Румынская тяга со штангой","3 × 8–10","2 мин","50 кг"],["Армейский жим штанги стоя","4 × 6","2–3 мин","30 кг"],["Жим гантелей лёжа","3 × 8–10","90 с","2 × 22 кг"],["Тяга гантели одной рукой в наклоне","3 × 10 на руку","90 с","24 кг"],["Подъём штанги на бицепс","3 × 10","60 с","25 кг"],["Французский жим гантелью (трицепс)","3 × 10–12","60 с","12 кг"],["Кардио: эллипс или дорожка","20–25 мин","пульс 120–135","—"]],
+const W={
+ "А":[["Присед со штангой","4 × 5–6","3 мин"],["Жим штанги лёжа","4 × 5–6","3 мин"],["Тяга штанги в наклоне","3 × 8–10","2 мин"],["Жим гантелей сидя вверх","3 × 8–10","90 с"],["Подъём коленей в висе (турник / брусья)","3 × 10–12","60 с"],["Кардио: дорожка в гору 6–10 %, 4,5–5,5 км/ч","—","пульс 120–135"]],
+ "Б":[["Становая тяга","3 × 5","3 мин"],["Жим гантелей на наклонной 30°","3 × 8–10","2 мин"],["Подтягивания / тяга верхнего блока","3 × 6–10","2 мин"],["Выпады","3 × 10 на ногу","90 с"],["Отжимания от пола / брусья","3 × 10–15","90 с"],["Кардио: велотренажёр","—","пульс 120–135"]],
+ "В":[["Гоблет-присед с гантелью","3 × 10–12","2 мин"],["Румынская тяга со штангой","3 × 8–10","2 мин"],["Армейский жим штанги стоя","4 × 6","2–3 мин"],["Жим гантелей лёжа","3 × 8–10","90 с"],["Тяга гантели одной рукой","3 × 10 на руку","90 с"],["Подъём штанги на бицепс","3 × 10","60 с"],["Французский жим гантелью","3 × 10–12","60 с"],["Кардио: эллипс или дорожка","—","пульс 120–135"]],
 };
-const BW="свой вес";
-const P = {
- "А":[["60","65","70","75","80","85","90","80"],["60","62,5","65","67,5","70","72,5","75","67,5"],["50","52,5","55","57,5","60","62,5","65","57,5"],["2 × 16","2 × 16","2 × 18","2 × 18","2 × 20","2 × 20","2 × 22","2 × 18"],[BW,BW,BW,BW,BW,BW,BW,BW],["20 мин","20 мин","25 мин","25 мин","25 мин","25 мин","25 мин","20 мин"]],
- "Б":[["70","75","80","85","90","95","100","90"],["2 × 20","2 × 20","2 × 22","2 × 22","2 × 24","2 × 24","2 × 26","2 × 22"],["блок 50","блок 50","блок 55","блок 55","блок 60","блок 60","блок 65","блок 55"],["без веса","без веса","2 × 8","2 × 10","2 × 10","2 × 12","2 × 12","2 × 8"],["от пола","от пола","брусья","брусья","брусья","брусья","брусья","от пола"],["20 мин","20 мин","25 мин","25 мин","25 мин","25 мин","25 мин","20 мин"]],
- "В":[["20","20","22","22","24","24","26","22"],["50","55","60","65","70","75","80","70"],["30","30","32,5","32,5","35","35","37,5","32,5"],["2 × 22","2 × 22","2 × 24","2 × 24","2 × 26","2 × 26","2 × 28","2 × 24"],["24","24","26","26","28","28","30","26"],["25","25","27,5","27,5","30","30","32,5","27,5"],["12","12","14","14","14","16","16","14"],["20 мин","20 мин","25 мин","25 мин","25 мин","25 мин","25 мин","20 мин"]],
+const BW="свой вес", C20="20 мин", C25="25 мин";
+const P={
+ "А":[["60","65","70","75","80","85","90","80"],["60","62,5","65","67,5","70","72,5","75","67,5"],["50","52,5","55","57,5","60","62,5","65","57,5"],["2 × 16","2 × 16","2 × 18","2 × 18","2 × 20","2 × 20","2 × 22","2 × 18"],[BW,BW,BW,BW,BW,BW,BW,BW],[C20,C20,C25,C25,C25,C25,C25,C20]],
+ "Б":[["70","75","80","85","90","95","100","90"],["2 × 20","2 × 20","2 × 22","2 × 22","2 × 24","2 × 24","2 × 26","2 × 22"],["блок 50","блок 50","блок 55","блок 55","блок 60","блок 60","блок 65","блок 55"],["без веса","без веса","2 × 8","2 × 10","2 × 10","2 × 12","2 × 12","2 × 8"],["от пола","от пола","брусья","брусья","брусья","брусья","брусья","от пола"],[C20,C20,C25,C25,C25,C25,C25,C20]],
+ "В":[["20","20","22","22","24","24","26","22"],["50","55","60","65","70","75","80","70"],["30","30","32,5","32,5","35","35","37,5","32,5"],["2 × 22","2 × 22","2 × 24","2 × 24","2 × 26","2 × 26","2 × 28","2 × 24"],["24","24","26","26","28","28","30","26"],["25","25","27,5","27,5","30","30","32,5","27,5"],["12","12","14","14","14","16","16","14"],[C20,C20,C25,C25,C25,C25,C25,C20]],
 };
-const WEEKS=[["12.10–18.10","Втягивание: 2–3 подхода, запас 3"],["19.10–25.10","Рост силы: все подходы, запас 1–2"],["26.10–01.11","Рост силы"],["02.11–08.11","Рост силы"],["09.11–15.11","Рост силы"],["16.11–22.11","Рост силы"],["23.11–29.11","Пиковая: запас 1"],["30.11–06.12","Разгрузка: 2 подхода"]];
+const PHASE=["Втягивание: 2–3 подхода, 3 повтора в запасе","Рост силы: все подходы, 1–2 в запасе","Рост силы: все подходы, 1–2 в запасе","Рост силы: все подходы, 1–2 в запасе","Рост силы: все подходы, 1–2 в запасе","Рост силы: все подходы, 1–2 в запасе","Пиковая: 1 повтор в запасе","Разгрузка: 2 подхода, без тяжести"];
+const STEPS=["6 000","8 000","10 000","10 000","10 000","10 000","10 000","10 000"];
+
+const EV={
+ "2026-10-10":[["🎂","Выходные перед стартом","Отмечаешь день рождения. Пиво допить или отдать — в понедельник дома ни капли."]],
+ "2026-10-11":[["🎂","С днём рождения! 28","Днём — заготовка на пн–вт: запечь 1,5–2 кг курицы, сварить 10 яиц, форель из морозилки в холодильник. Будильники на 08:10 и 22:05. Вечером закончить праздновать."]],
+ "2026-10-12":[["🚀","День 1 программы","Первый день кето и первая тренировка. Алкоголь — ноль до 12.12."]],
+ "2026-10-14":[["📦","Приезжает протеин","Если приехал — пьёшь сразу после зала уже сегодня."]],
+ "2026-10-18":[["📊","Первый недельный отчёт","Вечером: скрин весов за неделю + как прошли 3 тренировки."]],
+ "2026-10-24":[["🎉","День рождения в гостях","Шашлык + овощи без лаваша и соусов. Виски со льдом или водой, без колы. Лимит заранее (3–4 по 40 мл), стакан воды после каждой. Дома перед выходом — белок. Закончить за 2–3 ч до сна."]],
+ "2026-10-25":[["💧","День после праздника","0,5–1 л воды с солью до кофе. Вес сегодня и завтра не считаем. Всё по плану, без голодовки."]],
+ "2026-10-26":[["📏","Замеры + старт креатина","Утром натощак: талия по пупку на выдохе, ягодицы, грудь. Креатин 5 г с сегодня. В зале брусья вместо отжиманий, выпады с гантелями."]],
+ "2026-11-09":[["🏁","Разбор первого месяца","Замеры + фото фас/бок/спина. С сегодня можно 1 читмил по еде раз в 2 недели."]],
+ "2026-11-10":[["🩺","Неделя врачей 10–15.11","Давление в аптеке, запись сна приложением, ЭКГ, анализы крови, УЗИ живота."]],
+ "2026-11-23":[["📏","Замеры","Талия, ягодицы, грудь — утром натощак."]],
+ "2026-11-30":[["🔋","Разгрузочная неделя","В зале 2 подхода и веса ниже. Это нормально и нужно."]],
+ "2026-12-06":[["🧱","Строим блок 2","Коуч собирает программу на 07.12 – 31.01."]],
+ "2026-12-07":[["📏","Замеры + фото","Сравнение с 09.10."]],
+};
+const MEAS={"2026-10-26":1,"2026-11-09":1,"2026-11-23":1,"2026-12-07":1};
+const PHOTO={"2026-11-09":1,"2026-12-07":1};
+
+/* ===== УТИЛИТЫ ===== */
+const pad=n=>String(n).padStart(2,"0");
+const key=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fromKey=k=>{const [y,m,dd]=k.split("-").map(Number);return new Date(y,m-1,dd);};
+const day0=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
+const addD=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+const wdi=d=>(d.getDay()+6)%7;
+const dnum=d=>Math.round((day0(d)-START)/864e5);
+const weekOf=d=>Math.floor(dnum(d)/7)+1;
+const inProg=d=>day0(d)>=START&&day0(d)<=END;
 const kg=v=>/^[\d,]+$/.test(v)?v+" кг":v;
-const WK=(()=>{const s=new Date(2026,9,12),n=Math.floor((new Date()-s)/864e5/7)+1;return Math.min(8,Math.max(1,n));})();
-function schedule(d){
-  const g=!!d.gym, r=[
-    ["08:00","⚖️","Подъём → туалет → взвеситься натощак"],
-    ["08:05","💧","Вода 400 мл + щепотка соли · таблетка от рефлюкса"],
-    ["08:10","📩","Написать коучу: вес","msgrow"],
-    ["08:45","🍳","Завтрак + утренние добавки"],
-    ...(["Сб","Вс"].includes(d.k)?[["днём","💧","Бутылка воды 1,5 л — выпить до 18:00"]]:[["09–18","💻","Работа: на столе бутылка воды 1,5 л — выпить до 18:00. Рабочие звонки — стоя и на ходу по квартире"]]),
-    ["13:00","🍗","Обед — самый большой приём"],
-    ["13:30","🛒","Пешком по делу 20 мин: магазин за продуктами на сегодня, ПВЗ WB, аптека. В наушниках подкаст или сериал — только на ходу"],
-  ];
-  if(g) r.push(
-    ["16:00","🥣","Перекус (за 2,5 ч до зала)"],
-    ["18:00","💊","L-карнитин (+ креатин с 26.10)"],
-    ["18:15","🚶","Пешком до зала"],
-    ["18:30","🏋️","ЗАЛ — тренировка "+d.gym,"gymrow"],
-    ["20:00","🥤","Протеин сразу после зала"],
-    ["20:15","🐟","Лёгкий ужин — последняя еда"],
-    ["22:00","💊","Магний (+ псиллиум)"],
-    ["22:05","📩","Написать коучу: вечерний отчёт","msgrow"],
-    ["23:00","😴","Сон"]);
-  else r.push(
-    ["16:00","🥚","По желанию: протеин или 2 яйца"],
-    ["18:00","🚶",d.walk||"Пешком по делу 40–60 мин: ПВЗ, магазин, аптека, к кому-то в гости. Любимый подкаст/сериал — только на ходу","walkrow"],
-    ["19:30","🐟","Ужин — последняя еда (до 20:00)"],
-    ["22:00","💊","Магний (+ псиллиум)"],
-    ["22:05","📩","Написать коучу: вечерний отчёт"+(d.k==="Вс"?" + скрин весов за неделю":""),"msgrow"],
-    ["23:00","😴","Сон"]);
-  if(["Пт","Сб","Вс"].includes(d.k)){
-    const at=r.findIndex(x=>x[0]==="22:00");
-    r.splice(at,0,[g?"20:30":"20:00","🛡️","Вечер без пива: пива дома нет · вода или чай в бокале · фильм без пива. Тянет — сразу напиши коучу «тянет»","walkrow"]);
+const TODAY=day0(new Date());
+const D=k=>fromKey(k);
+
+/* ===== ДЕНЬ ===== */
+function timeline(d){
+  const w=wdi(d), g=GYM[w], k=key(d), wk=weekOf(d), wknd=w>=5, r=[];
+  let wake="Подъём → туалет → взвеситься натощак";
+  if(MEAS[k]) wake+=" + <b>замеры</b> (талия, ягодицы, грудь)";
+  if(PHOTO[k]) wake+=" + <b>фото</b> фас / бок / спина";
+  r.push(["08:00","⚖️",wake,MEAS[k]?"ev":""]);
+  r.push(["08:05","💧","Вода 400 мл + щепотка соли · таблетка от рефлюкса"]);
+  r.push(["08:10","📩","Коучу: вес","msg"]);
+  r.push(["08:45","🍳","Завтрак + утренние добавки"]);
+  r.push(wknd?["днём","💧","Бутылка воды 1,5 л — выпить до 18:00"]:["09–18","💻","Работа. Бутылка воды 1,5 л на столе — выпить до 18:00. Звонки — стоя и на ходу"]);
+  r.push(["13:00","🍗","Обед — самый большой приём"]);
+  r.push(["13:30","🛒","Пешком по делу 20 мин: магазин на сегодня, ПВЗ, аптека. Подкаст — только на ходу","walk"]);
+  if(g){
+    r.push(["16:00","🥣","Перекус (за 2,5 ч до зала)"]);
+    r.push(["18:00","💊","L-карнитин"+(d>=D("2026-10-26")?" + креатин":"")]);
+    r.push(["18:15","🚶","Пешком до зала","walk"]);
+    r.push(["18:30","🏋️","ЗАЛ — тренировка "+g+" · неделя "+wk,"gym"]);
+    r.push(["20:00","🥤",d>=D("2026-10-14")?"Протеин 2 ложки в 300 мл воды":"Протеина ещё нет — сразу ужин, рыба 250 г"]);
+    r.push(["20:15","🐟","Ужин — последняя еда"]);
+  } else if(k==="2026-10-24"){
+    r.push(["16:00","🥚","Перед выходом — 3 яйца или творог, чтобы не прийти голодным"]);
+    r.push(["вечер","🎉","Праздник — правила в жёлтой карточке вверху","ev"]);
+  } else {
+    r.push(["16:00","🥚","По желанию: протеин или 2 яйца"]);
+    r.push(["18:00","🛒",w===6?"Пешком за продуктами на неделю с рюкзаком (40–60 мин) → заготовка":"Пешком по делу 40–60 мин: ПВЗ, магазин, в гости. Подкаст или сериал — только на ходу","walk"]);
+    r.push(["19:30","🐟","Ужин — последняя еда (до 20:00)"]);
   }
+  if(w>=4 && d<ALCO_END && k!=="2026-10-24") r.push([g?"20:30":"20:00","🛡️","Вечер без пива: пива дома нет, в бокале вода или чай, фильм. Тянет — сразу пиши коучу «тянет»","walk"]);
+  r.push(["22:00","💊","Магний "+(wk<=1?"2 капсулы":"2–3 капсулы")]);
+  r.push(["22:05","📩","Коучу: вечерний отчёт"+(w===6?" + скрин весов за неделю":""),"msg"]);
+  r.push(["23:00","😴","Сон. Левый бок, рука вперёд, изголовье повыше"]);
   return r;
 }
-
-function supps(g){
-  const r=[
-    ["08:05","натощак","<span class='pill'>Таблетка от рефлюкса</span> — как назначил врач, за 30–60 мин до еды"],
-    ["08:45","с завтраком","<span class='pill'>Men's Multi</span> 1 таб · <span class='pill'>Зелёный чай</span> 1 капс · <span class='pill'>Омега-3</span> 1 капс"],
-    ["13:00","с обедом","<span class='pill'>Масло чёрного тмина</span> ½ ч. л."],
-  ];
-  if(g) r.push(["18:00","за 30 мин до зала","<span class='pill'>L-карнитин</span> 25 мл в стакане воды"],
-               ["20:00","сразу после зала","<span class='pill'>Протеин</span> 30 г в 300 мл воды (пока нет — ужин с рыбой 250 г)"]);
-  r.push(["любое","с 26.10","<span class='pill'>Креатин</span> 5 г в воде"],
-         ["22:00","перед сном","<span class='pill'>Магний</span> 2 капсулы (через неделю, если стул не жиже, — 3)"],
-         ["22:00","если купил","<span class='pill'>Псиллиум</span> 5 г в 300 мл воды"]);
+function supps(d){
+  const g=GYM[wdi(d)], wk=weekOf(d), r=[
+    ["08:05","натощак",["Таблетка от рефлюкса"],"как назначил врач"],
+    ["08:45","с завтраком",["Men's Multi · 1 таб","Зелёный чай · 1 капс","Омега-3 · 1 капс"]],
+    ["13:00","с обедом",["Чёрный тмин · ½ ч. л."]]];
+  if(g) r.push(["18:00","до зала",["L-карнитин · 25 мл в воде"]]);
+  if(d>=D("2026-10-26")) r.push([g?"18:00":"утро","любое время",["Креатин · 5 г в воде"]]);
+  if(g) r.push(["20:00","после зала",d>=D("2026-10-14")?["Протеин · 2 ложки в 300 мл воды"]:[],d>=D("2026-10-14")?"":"протеин ещё не приехал — ужин с рыбой 250 г"]);
+  r.push(["22:00","перед сном",["Магний · "+(wk<=1?"2 капсулы":"3 капсулы")],wk<=1?"":"если стул жиже — 2"]);
   return r;
 }
-
-function meal(title,time,items,opt){
-  return `<div class="meal${opt?" opt":""}"><div class="h"><span>${title}</span><em>${time}</em></div><ul>${items.map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
+function meal(t,tm,items,opt){return `<div class="meal${opt?" opt":""}"><div class="h"><span>${t}</span><em>${tm}</em></div><ul>${items.map(x=>`<li>${x}</li>`).join("")}</ul></div>`;}
+function evHTML(k){return EV[k]?`<div class="evs">${EV[k].map(e=>`<div class="evc"><div class="e">${e[0]}</div><div><b>${e[1]}</b><span>${e[2]}</span></div></div>`).join("")}</div>`:"";}
+function sec(ic,bg,title,extra,body){return `<div class="sec"><div class="sh"><div class="ic" style="background:${bg}">${ic}</div><h3>${title}</h3>${extra||""}</div>${body}</div>`;}
+const CK=(k,i)=>"fp:"+k+":"+i;
+function getCk(k,i){try{return localStorage.getItem(CK(k,i))==="1"}catch(e){return false}}
+function tg(el,k,i){
+  const v=!el.classList.contains("done"); el.classList.toggle("done",v);
+  try{v?localStorage.setItem(CK(k,i),"1"):localStorage.removeItem(CK(k,i))}catch(e){}
+  const box=el.closest(".sec"), all=box.querySelectorAll(".tr").length, dn=box.querySelectorAll(".tr.done").length, c=box.querySelector(".cnt");
+  if(c){c.textContent=`✓ ${dn} из ${all}`;c.classList.toggle("done",dn===all);}
+}
+function tlHTML(rows,k){
+  const dn=rows.filter((r,i)=>getCk(k,i)).length;
+  return [`<span class="cnt${dn===rows.length?" done":""}">✓ ${dn} из ${rows.length}</span>`,
+  `<div class="tl">${rows.map((r,i)=>`<div class="tr ${r[3]||""}${getCk(k,i)?" done":""}" onclick="tg(this,'${k}',${i})"><div class="t">${r[0]}</div><div class="dot"></div><div class="x"><i>${r[1]}</i>${r[2]}</div><div class="ck"></div></div>`).join("")}</div><p class="note">Нажимай на пункт — отметится выполненным. Отметки хранятся в этом браузере.</p>`];
+}
+function heroHTML(d,cls,top,chips,pct,lbl){
+  return `<div class="hero ${cls}"><div class="top">${top}</div><h2>${WDN[wdi(d)]}, ${d.getDate()} ${MON[d.getMonth()]}</h2><div class="chips">${chips.map(c=>`<span>${c}</span>`).join("")}</div>${pct!=null?`<div class="prog"><div class="bar"><i style="width:${pct}%"></i></div><div class="lbl"><span>${lbl[0]}</span><span>${lbl[1]}</span></div></div>`:""}</div>`;
 }
 
-const tabs=document.getElementById("tabs"), box=document.getElementById("days");
-DAYS.forEach((d,i)=>{
-  const g=!!d.gym; let n=0; const N=()=>`<span class="n">${++n}</span>`;
-  let h=`<section class="day" id="d${i}">
-  <div class="dayhead"><h2>${d.name}</h2>${g?`<span class="badge gym">🏋️ Зал 18:30 · тренировка ${d.gym}</span>`:`<span class="badge rest">🚶 Отдых · 10 000 шагов</span>`}</div>
+function dayHTML(d){
+  const w=wdi(d), g=GYM[w], k=key(d), wk=weekOf(d), ip=inProg(d), dn=dnum(d)+1;
+  const chips=[g?`🏋️ Тренировка ${g} · 18:30`:`🌿 День отдыха`];
+  if(ip) chips.push(`👣 от ${STEPS[wk-1]} шагов`);
+  if(d<ALCO_END) chips.push(`🚫 Алкоголь 0 · ещё ${Math.round((ALCO_END-day0(d))/864e5)} дн.`);
+  let h=heroHTML(d,g?"":"rest",ip?`Неделя ${wk} из 8 · день ${dn} из 56`:"После блока 1",chips,ip?Math.round(dn/56*100):null,["Блок 1 · 12.10","06.12"]);
+  h+=`<div class="tiles">
+   <div class="tile"><div class="ic">🔥</div><b>~2 200</b><small>ккал по меню</small></div>
+   <div class="tile"><div class="ic">🥩</div><b>~190 г</b><small>белка</small></div>
+   <div class="tile"><div class="ic">💧</div><b>3–3,5 л</b><small>воды</small></div>
+   <div class="tile"><div class="ic">👣</div><b>${ip?STEPS[wk-1]:"10 000"}</b><small>шагов</small></div></div>`;
+  h+=evHTML(k);
+  if(d>END) h+=`<div class="box" style="margin:0 0 14px">Блок 1 закончился 06.12. Программу на 07.12 – 31.01 коуч соберёт по итогам — пока день по базовому шаблону.</div>`;
 
-  <div class="sec"><h3>${N()} Распорядок дня</h3><div class="tl">${schedule(d).map(r=>`<div class="${r[3]||""}"><b>${r[0]}</b><i>${r[1]}</i><span>${r[2]}</span><span class="k"></span></div>`).join("")}</div></div>
+  const t=tlHTML(timeline(d),k);
+  h+=sec("🕗","#edf2ff","Распорядок дня",t[0],t[1]);
 
-  <div class="sec"><h3>${N()} Еда</h3><div class="meals">
-    ${meal("🍳 Завтрак","08:45",d.menu.b)}
-    ${meal("🍗 Обед","13:00",d.menu.l)}
-    ${g?meal("🥣 Перекус","16:00",d.menu.s):meal("🥚 Перекус — по желанию","16:00",["Протеин 30 г или 2 варёных яйца"],true)}
-    ${meal(g?"🐟 Ужин после зала":"🐟 Ужин",g?"20:15":"19:30–20:00",d.menu.d)}
-  </div></div>
+  const m=MENU[w], party=k==="2026-10-24";
+  h+=sec("🍽","#fff4e8","Еда","",(party?`<div class="box" style="margin:0 0 10px">Вечером праздник: завтрак и обед — по меню, ужин — шашлык и овощи в гостях.</div>`:"")+`<div class="meals">
+    ${meal("🍳 Завтрак","08:45",m.b)}${meal("🍗 Обед","13:00",m.l)}
+    ${g?meal("🥣 Перекус","16:00",m.s):meal("🥚 Перекус — по желанию","16:00",["Протеин 2 ложки или 2 варёных яйца"],true)}
+    ${meal(g?"🐟 Ужин после зала":"🐟 Ужин",g?"20:15":"19:30",party?["Шашлык (свинина / курица) + овощи, без лаваша и соусов"]:m.d)}
+  </div><div class="drink"><span class="ok">✓ вода, чай без сахара</span><span class="ok">кола Zero — max стакан</span><span class="no">✕ сок, спрайт, кола, пиво</span></div><p class="note">Мясо и рыбу взвешивать сырыми на кухонных весах.</p>`);
 
-  <div class="sec"><h3>${N()} Добавки</h3><table><tr><th>Когда</th><th>Что выпить</th></tr>
-    ${supps(g).map(r=>`<tr><td class="tm">${r[0]}<small>${r[1]}</small></td><td>${r[2]}</td></tr>`).join("")}
-  </table></div>`;
+  h+=sec("💊","#f3edff","Добавки","",`<div class="sup">${supps(d).map(r=>`<div class="su"><div class="t">${r[0]}<small>${r[1]}</small></div><div class="p">${r[2].map(x=>`<span>${x}</span>`).join("")}${r[3]?`<em>${r[3]}</em>`:""}</div></div>`).join("")}</div>`);
 
-  if(g) h+=`<div class="sec"><h3>${N()} Тренировка ${d.gym}</h3>
-    <div class="phase">
-      <div><b>12.10 – 18.10 · втягивание</b>2–3 подхода, 3 повтора в запасе. Веса ~60–70 % от «кажется рабочим»</div>
-      <div><b>19.10 – 29.11 · рост силы</b>Все подходы, 1–2 повтора в запасе. Пока штанга идёт быстро — +2,5–5 кг каждую неделю на базе</div>
-      <div><b>30.11 – 06.12</b>Разгрузка: 2 подхода, веса −10 %</div>
-    </div>
-    <p class="warm"><b>Разминка 8–10 мин:</b> 5 мин эллипс или велосипед → стоя: махи ногами, вращения плеч и таза, 10 приседаний без веса → 1–2 лёгких подхода первого упражнения. Коврик и место на полу не нужны.</p>
-    <table><tr><th>#</th><th>Упражнение</th><th>Подходы × повторы</th><th>Отдых</th><th>Неделя ${WK} · ${WEEKS[WK-1][0]}</th></tr>
-    ${W[d.gym].map((e,j)=>`<tr><td class="no">${j+1}</td><td>${e[0]}</td><td class="s">${e[1]}</td><td class="s">${e[2]}</td><td class="s"><b>${kg(P[d.gym][j][WK-1])}</b></td></tr>`).join("")}
-    </table>
-    <div class="box" style="margin-top:8px;background:#fff1f0;border-color:#f3c5c0"><b>⚠️ Стартовый вес — потолок первой недели, не цель.</b> Перед каждым упражнением 1–2 разминочных подхода (пустой гриф / лёгкие гантели). Сделал первый рабочий подход и запас меньше 3 повторов → сразу снизь вес на 10–20 %. Хрустит или тянет в суставе — снизь вес или пропусти упражнение. Если стартовый вес слишком лёгкий, всё равно не прыгай больше чем на +10 кг за тренировку.</div><div class="box" style="margin-top:8px"><b>Как прибавлять вес (сам, без отчёта):</b> каждую следующую неделю — если в прошлый раз сделал все подходы и повторы и оставался запас 1–2 повтора → <b>+2,5 кг</b> (жимы, тяги, бицепс) или <b>+5 кг</b> (присед, становая, румынская). Гантели — на шаг тяжелее. Не сделал все повторы → вес оставить. Стартовый вес слишком лёгкий (запас больше 4 повторов) → уже в следующем подходе +5–10 кг.</div><p class="tips">Без отказа и без натуживания. Техника есть, но связки отвыкли: никаких проверок максимума до декабря. Боль в локте/плече/колене — вес не поднимаем. Печёт лёжа → жим гантелей на наклонной вместо жима лёжа.</p></div>`;
+  if(g){
+    const wi=Math.min(8,Math.max(1,wk))-1;
+    h+=sec("🏋️","#edf2ff","Тренировка "+g,`<span class="cnt">неделя ${wi+1}</span>`,`<div class="phase">⚡<div><b>${PHASE[wi]}</b></div></div>
+    <div class="ex">${W[g].map((e,j)=>{const c=/Кардио/.test(e[0]);return `<div class="exr${c?" cardio":""}"><div class="no">${j+1}</div><div class="nm">${e[0]}<small>${c?e[2]:e[1]+" · отдых "+e[2]}</small></div><div class="wt">${kg(P[g][j][wi])}</div></div>`}).join("")}</div>
+    <p class="warm"><b>Разминка 8–10 мин стоя:</b> 5 мин эллипс или велосипед → махи ногами, вращения плеч и таза, 10 приседаний без веса → 1–2 лёгких подхода с пустым грифом.</p>
+    ${wi===0?`<div class="box red"><b>⚠️ Первая неделя:</b> вес — потолок, а не цель. В первом рабочем подходе запас меньше 3 повторов → сразу −10–20 %. Хрустит или тянет в суставе — снизь или пропусти.</div>`:`<div class="box">Если на прошлой неделе <b>не сделал все повторы</b> — бери вес прошлой недели (вкладка «Программа»).</div>`}
+    <p class="note">Без отказа и натуживания. Боль или давление в груди при нагрузке — стоп, к врачу. Печёт лёжа — жим гантелей на наклонной вместо жима лёжа.</p>`);
+  }
 
-  const lifts=g?W[d.gym].filter(e=>!/Кардио|Подъём коленей/.test(e[0])).map(e=>e[0].replace(/ \(.*\)/,"")+": ___ кг × ___").join("\n"):"";
-  const msgs=[
-    ["🌅 Утро","08:10","Вес: ___ кг",""],
-    ["🌙 Вечер","22:05","Стул: тип ___ (1–7), ___ раз\nЭнергия: ___/10\nГолод / тяга к сладкому: ___\nИзжога: ___/10\n"+(g?"Зал: легко / нормально / тяжело / что-то болело\n":"")+"Еда: всё по меню на сайте, граммы по весам — да / нет\nЕсли нет — что и сколько грамм съел вместо / сверху: ___\nВода: ___ л\nШаги: ___","Стул: 1–2 твёрдый · 3–4 норма · 5 мягкие кусочки · 6–7 кашица/вода"],
-    ...(d.k==="Вс"?[["📊 Итоги недели","22:05","Скрин весов за неделю\nТренировок: ___ из 3\nЧто было тяжело: ___","Раз в 2 недели в понедельник утром — замеры талии, ягодиц, груди: 26.10, 09.11, 23.11, 07.12. Фото фас/бок/спина: 09.11, 07.12."]]:[]),
-  ];
-  h+=`<div class="sec"><h3>${N()} Что написать коучу</h3><div class="msgs">${msgs.map(m=>`<div class="msg"><div class="h"><b>${m[0]} <em>${m[1]}</em></b><button onclick="cp(this)">Скопировать</button></div><pre>${m[2]}</pre>${m[3]?`<div class="note">${m[3]}</div>`:""}</div>`).join("")}</div></div>`;
+  const ev=`Стул: тип ___ (1–7), ___ раз\nЭнергия: ___/10\nГолод / тяга: ___\nИзжога: ___/10\n${g?"Зал: легко / нормально / тяжело / болело\n":""}Еда по меню — да / нет. Если нет — что и сколько грамм: ___\nВода: ___ л\nШаги: ___${w===6?"\n\nНеделя: скрин весов · тренировок ___ из 3 · что было тяжело: ___":""}`;
+  h+=sec("📩","#fff8db","Что написать коучу","",`<div class="msgs">
+   <div class="mc"><div class="h"><b>🌅 Утро<em>08:10</em></b><button onclick="cp(this)">Скопировать</button></div><pre>Вес: ___ кг${MEAS[k]?"\nТалия: ___ · Ягодицы: ___ · Грудь: ___":""}${PHOTO[k]?"\n+ 3 фото":""}</pre></div>
+   <div class="mc"><div class="h"><b>🌙 Вечер<em>22:05</em></b><button onclick="cp(this)">Скопировать</button></div><pre>${ev}</pre><p class="note">Стул: 1–2 твёрдый · 3–4 норма · 5 мягкие кусочки · 6–7 кашица/вода</p></div>
+  </div>`);
+  return h;
+}
+function preStartHTML(d){
+  const k=key(d), left=Math.round((START-day0(d))/864e5);
+  let h=heroHTML(d,"pre","До старта программы",[`⏳ Старт через ${left} дн.`,"🚀 Понедельник, 12 октября"],null);
+  h+=evHTML(k);
+  const rows=[["","⚖️","Утром взвеситься и написать вес коучу — привыкаем"],["","🛒","Докупить: белокочанная капуста, кабачки, огурцы, зелень, оливковое масло, бульонные кубики без сахара"],["","🍺","Пиво из дома убрать до вечера воскресенья"],["","🥘","Воскресенье днём: запечь курицу, сварить яйца, форель — в холодильник"],["","⏰","Будильники: 08:10 «вес коучу» и 22:05 «вечерний отчёт»"],["","🏋️","Собрать сумку в зал на понедельник"]];
+  const t=tlHTML(rows,"prestart");
+  h+=sec("✅","#fff4e8","Подготовка к старту",t[0],t[1]);
+  h+=`<div class="box">Понедельник 12 октября — день 1. Открой его кнопкой «день →» или в полоске дней сверху.</div>`;
+  return h;
+}
 
-  if(d.prep) h+=`<div class="sec"><div class="box">${d.prep}</div></div>`;
+/* ===== ВИДЫ ===== */
+let SEL=TODAY;
+function renderDay(){
+  const mon=addD(SEL,-wdi(SEL));
+  let h=`<div class="dnav"><button onclick="go(-1)">← день</button><button onclick="go(1)">день →</button><button class="today" onclick="SEL=TODAY;renderDay()">Сегодня</button></div><div class="strip">`;
+  for(let i=0;i<7;i++){const d=addD(mon,i),g=inProg(d)?GYM[i]:null;h+=`<button class="${g?"g ":""}${+d===+SEL?"sel ":""}${+d===+TODAY?"now ":""}${EV[key(d)]?"ev":""}" onclick="pick('${key(d)}')"><small>${WDS[i]}</small><b>${d.getDate()}</b><small class="t">${g?"зал "+g:(d<START?"—":"отдых")}</small></button>`;}
+  h+=`</div><div class="tools"><button onclick="printDays([SEL])">🖨 Печать дня</button><button onclick="printWeek()">🖨 Печать недели</button></div>`;
+  h+=SEL<START?preStartHTML(SEL):dayHTML(SEL);
+  document.getElementById("v-day").innerHTML=h;
+  try{history.replaceState(null,"","#"+key(SEL))}catch(e){}
+}
+function go(n){SEL=addD(SEL,n);renderDay();window.scrollTo(0,0);}
+function pick(k){SEL=fromKey(k);show("day");}
 
-  h+=`<div class="sec"><h3>${N()} Правила дня</h3><div class="rules">
-    <span>💧 Вода 3–3,5 л</span><span>🧂 Соль +1 ч. л.</span><span>👣 8–10 тыс. шагов</span>
-    <span>🚫 Хлеб, сахар, крупы, картошка</span><span>🚫 Сок, спрайт, обычная кола — ноль</span><span>🥤 Кола Zero — максимум стакан</span><span>🔥 Ничего жареного</span>
-    <span>⏰ Еда за 3 ч до сна</span><span>☕ Кофе после завтрака, до 15:00</span></div></div>
-  </section>`;
-  box.insertAdjacentHTML("beforeend",h);
-
-  const b=document.createElement("button"); b.className=g?"g":"";
-  b.innerHTML=`${d.k}<small>${g?"зал "+d.gym:"отдых"}</small>`; b.onclick=()=>show(i); tabs.appendChild(b);
-});
-
-(function(){
-  const ev=[
-   ["12.10–18.10","6 000","Старт кето · 14.10 протеин · вес каждый день"],
-   ["19.10–25.10","8 000","24.10 ДР — запланированный виски"],
-   ["26.10–01.11","10 000","26.10 замеры · старт креатина · брусья · решение по псиллиуму"],
-   ["02.11–08.11","10 000","Неделя без событий"],
-   ["09.11–15.11","10 000","09.11 разбор месяца · замеры + фото · можно 1-й читмил · 10–15.11 давление, запись сна, ЭКГ, анализы"],
-   ["16.11–22.11","10 000",""],
-   ["23.11–29.11","10 000","23.11 замеры · пиковая неделя в зале"],
-   ["30.11–06.12","10 000","Разгрузка · 06.12 строим блок 2 · 07.12 замеры + фото"],
-  ];
-  let h=`<h4>Неделя за неделей</h4><div class="scroll"><table><tr><th>#</th><th>Даты</th><th>Зал</th><th>Шаги/день</th><th>События</th></tr>`+
-    ev.map((e,i)=>`<tr class="${i+1===WK?"cur":""}"><td>${i+1}</td><td class="s">${e[0]}</td><td>${WEEKS[i][1]}</td><td>${e[1]}</td><td>${e[2]}</td></tr>`).join("")+`</table></div>`;
-  ["А","Б","В"].forEach(k=>{
-    h+=`<h4>Тренировка ${k} — вес по неделям</h4><div class="scroll"><table><tr><th>Упражнение</th>${WEEKS.map((w,i)=>`<th${i+1===WK?' style="color:var(--gym)"':""}>${i+1}</th>`).join("")}</tr>`+
-      W[k].map((e,j)=>`<tr><td>${e[0].replace(/ \(.*\)/,"")}</td>${P[k][j].map((v,i)=>`<td class="s"${i+1===WK?' style="background:#eaf0fe;font-weight:700"':""}>${v}</td>`).join("")}</tr>`).join("")+`</table></div>`;
+function renderCal(){
+  let h=`<div class="legend"><span><i style="background:var(--gym-bg);border:1px solid #c9d8fb"></i>Зал</span><span><i style="background:#fff;border:1px solid var(--line)"></i>Отдых</span><span>🎉 Событие</span><span><i style="box-shadow:0 0 0 2px var(--ink) inset"></i>Сегодня</span></div><p class="note" style="margin:-4px 0 12px">Нажми на любую дату — откроется её план.</p>`;
+  [[2026,9],[2026,10],[2026,11]].forEach(([y,m])=>{
+    const first=new Date(y,m,1), days=new Date(y,m+1,0).getDate();
+    h+=`<div class="month"><h3>${MONN[m]} ${y}</h3><div class="cal">${WDS.map(x=>`<div class="wd">${x}</div>`).join("")}`;
+    for(let i=0;i<wdi(first);i++) h+=`<div class="blank"></div>`;
+    for(let dd=1;dd<=days;dd++){
+      const d=new Date(y,m,dd), g=GYM[wdi(d)], k=key(d), e=EV[k], ip=inProg(d);
+      h+=`<button class="${g&&ip?"g ":""}${!ip&&d>END?"out ":""}${+d===+TODAY?"now ":""}" onclick="pick('${k}')" title="${e?e[0][1]:""}"><b>${dd}</b><small>${g&&ip?"зал "+g:""}</small>${e?`<div style="margin-top:2px">${e[0][0]}</div>`:""}</button>`;
+    }
+    h+=`</div></div>`;
   });
-  h+=`<p class="note" style="font-size:13px;color:var(--muted)">Вес на неделю — если на прошлой неделе сделал все повторы. Не сделал → повтори вес прошлой недели, график сдвигается. Гантели — вес одной гантели.</p>
+  h+=`<h4>Все события</h4><table>${Object.keys(EV).map(k=>{const d=fromKey(k);return `<tr><td class="s"><a href="#${k}" onclick="pick('${k}');return false">${WDS[wdi(d)]}, ${d.getDate()} ${MON[d.getMonth()]}</a></td><td>${EV[k][0][0]} <b>${EV[k][0][1]}</b></td></tr>`}).join("")}</table>`;
+  document.getElementById("v-cal").innerHTML=h;
+}
+
+function renderProg(){
+  const cw=inProg(TODAY)?weekOf(TODAY):0;
+  let h=`<h4 style="margin-top:0">Блок 1 · 12.10 – 06.12 · Full Body Пн / Ср / Пт в 18:30</h4><div class="scroll"><table><tr><th>#</th><th>Даты</th><th>Зал</th><th>Шаги в день</th></tr>`;
+  for(let i=0;i<8;i++){const a=addD(START,i*7),b=addD(a,6);h+=`<tr class="${i+1===cw?"cur":""}"><td>${i+1}</td><td class="s">${pad(a.getDate())}.${pad(a.getMonth()+1)} – ${pad(b.getDate())}.${pad(b.getMonth()+1)}</td><td>${PHASE[i]}</td><td>${STEPS[i]}</td></tr>`;}
+  h+=`</table></div>`;
+  [["А","Понедельник"],["Б","Среда"],["В","Пятница"]].forEach(([k,dn])=>{
+    h+=`<h4>Тренировка ${k} · ${dn}</h4><div class="scroll"><table><tr><th>Упражнение</th><th>Подходы</th>${[1,2,3,4,5,6,7,8].map(i=>`<th${i===cw?' style="color:var(--gym)"':""}>Нед ${i}</th>`).join("")}</tr>`+
+      W[k].map((e,j)=>`<tr><td>${e[0]}</td><td class="s">${e[1]}</td>${P[k][j].map((v,i)=>`<td class="s${i+1===cw?" cw":""}">${v}</td>`).join("")}</tr>`).join("")+`</table></div>`;
+  });
+  h+=`<div class="box"><b>Как прибавлять:</b> вес следующей недели берёшь, только если на этой сделал все подходы и повторы. Не сделал — повтори вес, график сдвигается на неделю. Гантели — вес одной гантели. Больше +10 кг за тренировку не прыгать.</div>
   <h4>Дальше по месяцам</h4><table><tr><th>Когда</th><th>Цель</th><th>Что делаем</th></tr>
-  <tr><td class="s">07.12 – 31.01</td><td>~104–106 кг к 04.01</td><td>Блок 2 зала — построю 06.12 по тому, как прошёл блок 1. 12.12 конец «алкогольного поста», Новый год — читмил</td></tr>
-  <tr><td class="s">февраль – апрель</td><td>97–100 кг, талия ~100</td><td>Блоки 3–4, пересчёт калорий каждые −5 кг. Разговор с гастроэнтерологом про Пантап</td></tr>
-  <tr><td class="s">май – октябрь 2027</td><td>88–91 кг, талия &lt; 94</td><td>Сушка до ~15 % жира, затем поддержание</td></tr></table>`;
-  document.getElementById("wplan").innerHTML=h;
-})();
-let cur=0;
-function show(i){
-  cur=i;
-  document.querySelectorAll(".day").forEach((s,j)=>s.classList.toggle("on",j===i));
-  [...tabs.children].forEach((b,j)=>b.classList.toggle("on",j===i));
+  <tr><td class="s">07.12 – 31.01</td><td>104–106 кг к 04.01</td><td>Блок 2 — коуч собирает 06.12 по итогам блока 1. 12.12 конец «поста» по алкоголю, Новый год — читмил</td></tr>
+  <tr><td class="s">февраль – апрель</td><td>97–100 кг, талия ~100</td><td>Блоки 3–4, пересчёт калорий каждые −5 кг, гастроэнтеролог про Пантап</td></tr>
+  <tr><td class="s">май – октябрь 2027</td><td>88–91 кг, талия &lt; 94</td><td>Дожимаем до ~15 % жира, затем поддержание</td></tr></table>`;
+  document.getElementById("v-prog").innerHTML=h;
 }
-show((new Date().getDay()+6)%7);
-function cp(b){const t=b.closest('.msg').querySelector('pre').innerText;try{navigator.clipboard.writeText(t).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Скопировать',1500)})}catch(e){}}
-function printOne(){
-  const st=document.createElement("style");
-  st.textContent=`@media print{.day{display:none!important}#d${cur}{display:block!important}}`;
-  document.head.appendChild(st); window.print(); setTimeout(()=>st.remove(),800);
+
+function renderRules(){
+  document.getElementById("v-rules").innerHTML=`
+  <h4 style="margin-top:0">Цифры на день</h4>
+  <div class="rules"><span>🔥 ~2 200 ккал</span><span>🥩 Белок 170–190 г</span><span>🍞 Углеводы до 25 г</span><span>💧 Вода 3–3,5 л</span><span>🧂 Соль +1 ч. л.</span><span>👣 Шаги — по неделе</span><span>😴 Сон 23:00–08:00</span></div>
+  <h4>Еда</h4><div class="grid2">
+   <div class="card yes"><h4>✅ Можно</h4><ul><li>Яйца, курица, свинина, говядина</li><li>Рыба (форель, скумбрия, минтай)</li><li>Творог, сыр, сливки 20 % (30–50 мл)</li><li>Капуста, брокколи, цветная, кабачки, огурцы, зелень</li><li>Сливочное и оливковое масло</li><li>Грецкие орехи до 20–30 г</li></ul></div>
+   <div class="card no"><h4>🚫 Нельзя</h4><ul><li>Хлеб, выпечка, мука</li><li>Сахар, сладкое, мёд</li><li>Крупы, картошка, макароны</li><li>Фрукты (кроме горсти ягод)</li><li>Сок, спрайт, обычная кола, пиво</li><li>⚠️ Креветки, крабы, раки — аллергия</li></ul></div>
+  </div>
+  <h4>Рефлюкс</h4><div class="rules"><span>Таблетка каждое утро, не пропускать</span><span>Еда за 3 ч до сна</span><span>Не жарить — духовка, варка, тушение</span><span>Газировку убрать</span><span>Сон на левом боку, изголовье выше</span></div>
+  <h4>Алкоголь и читмилы</h4><table>
+   <tr><td class="s"><b>12.10 – 12.12</b></td><td>Алкоголь — ноль, как в пост. Исключение — ДР 24.10 (план в календаре)</td></tr>
+   <tr><td class="s"><b>с 09.11</b></td><td>Читмил по еде (пицца, суши) — не чаще раза в 2 недели, лучше в один вечер с алкогольным</td></tr>
+   <tr><td class="s"><b>после 12.12</b></td><td>Алкоголь — только в компании, заранее решённый, не чаще раза в 2–3 недели. <b>Никогда одному дома под фильм</b></td></tr>
+   <tr><td class="s"><b>на следующий день</b></td><td>Обычный план. Без голодовки и «наказаний»</td></tr></table>
+  <h4>Если сорвался</h4><div class="box" style="margin-top:0">Следующий приём — по плану. Не голодать. Больше воды и соли. Написать коучу: что было и почему — ищем причину, а не виноватого.</div>
+  <h4>Кето-грипп (дни 2–6)</h4><div class="box" style="margin-top:0">Слабость, голова, раздражительность — нормально. Кружка солёного бульона 1–2 раза в день, +0,5 л воды, магний, сон. Проходит к 5–7 дню.</div>
+  <h4>Пропустил тренировку</h4><div class="box" style="margin-top:0">Переносишь на следующий день (не две подряд). Пропустил неделю — веса −10 %.</div>
+  <h4>Стоп и к врачу</h4><div class="box red" style="margin-top:0">Боль или давление за грудиной при нагрузке, отдаёт в руку или челюсть · одышка не по нагрузке · обморок · кровь или чёрный стул · еда застревает при глотании.</div>`;
 }
+
+/* ===== ПЕЧАТЬ ===== */
+function printDays(arr){
+  document.getElementById("print").innerHTML=arr.map(d=>`<div class="pday">${d<START?preStartHTML(d):dayHTML(d)}</div>`).join("");
+  window.print();
+}
+function printWeek(){const mon=addD(SEL,-wdi(SEL));printDays([0,1,2,3,4,5,6].map(i=>addD(mon,i)));}
+function cp(b){const t=b.closest('.mc').querySelector('pre').innerText;try{navigator.clipboard.writeText(t).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Скопировать',1500)})}catch(e){}}
+
+/* ===== ПЕРЕКЛЮЧЕНИЕ ===== */
+const R={day:renderDay,cal:renderCal,prog:renderProg,rules:renderRules};
+function show(v){
+  document.querySelectorAll(".pv").forEach(x=>x.style.display="none");
+  document.getElementById("v-"+v).style.display="block";
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  R[v](); window.scrollTo(0,0);
+}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+if(/^#\d{4}-\d{2}-\d{2}$/.test(location.hash)) SEL=fromKey(location.hash.slice(1));
+show("day");
 </script>
 </body>
 </html>
