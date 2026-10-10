@@ -47,6 +47,16 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .tl .k{width:16px;height:16px;border:1.5px solid #b9bfc8;border-radius:4px;justify-self:end}
 .tl .gymrow{background:var(--gym-bg);font-weight:700}
 .tl .walkrow{background:var(--rest-bg);font-weight:700}
+.tl .msgrow{background:#fff6d9;font-weight:700}
+.msgs{display:grid;gap:8px}
+.msg{border:1px solid #f0dfa8;background:#fffbea;border-radius:12px;padding:10px 12px}
+.msg .h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+.msg .h b{font-size:14px}
+.msg .h em{font-style:normal;font-size:13px;color:var(--food);font-weight:700}
+.msg pre{margin:0;white-space:pre-wrap;font:14px/1.5 ui-monospace,Consolas,monospace;color:var(--ink)}
+.msg button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:3px 10px;font-size:12px;cursor:pointer}
+.msg .note{font-size:12px;color:var(--muted);margin-top:4px}
+@media print{.msg button{display:none}}
 
 /* 2. еда */
 .meals{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
@@ -170,6 +180,7 @@ function schedule(d){
   const g=!!d.gym, r=[
     ["07:30","⚖️","Взвеситься натощак, записать вес"],
     ["07:35","💧","Вода 400 мл + щепотка соли · таблетка от рефлюкса"],
+    ["07:40","📩","Написать коучу: вес","msgrow"],
     ["08:30","🍳","Завтрак + утренние добавки"],
     ["13:30","🍗","Обед — самый большой приём"],
     ["14:00","🚶","Прогулка 15–20 мин"],
@@ -179,14 +190,17 @@ function schedule(d){
     ["18:30","💊","L-карнитин (+ креатин с 26.10)"],
     ["19:00","🏋️","ЗАЛ — тренировка "+d.gym,"gymrow"],
     ["20:30","🥤","Протеин сразу после зала"],
+    ["20:40","📩","Написать коучу: рабочие веса","msgrow"],
     ["21:00","🐟","Лёгкий ужин — последняя еда"],
     ["22:00","💊","Магний"],
+    ["22:05","📩","Написать коучу: вечерний отчёт","msgrow"],
     ["23:45","😴","Сон"]);
   else r.push(
     ["16:30","🥚","По желанию: протеин или 2 яйца"],
     ["18:00","🚶",d.walk||"Прогулка 45–60 мин быстрым шагом","walkrow"],
     ["19:30","🐟","Ужин — последняя еда (до 20:30)"],
     ["22:00","💊","Магний"],
+    ["22:05","📩","Написать коучу: вечерний отчёт"+(d.k==="Вс"?" + скрин весов за неделю":""),"msgrow"],
     ["23:30","😴","Сон"]);
   return r;
 }
@@ -200,7 +214,8 @@ function supps(g){
   if(g) r.push(["18:30","за 30 мин до зала","<span class='pill'>L-карнитин</span> 25 мл в стакане воды"],
                ["20:30","сразу после зала","<span class='pill'>Протеин</span> 30 г в 300 мл воды (пока нет — ужин с рыбой 250 г)"]);
   r.push(["любое","с 26.10","<span class='pill'>Креатин</span> 5 г в воде"],
-         ["22:00","перед сном","<span class='pill'>Магний</span> 200–300 мг"]);
+         ["22:00","перед сном","<span class='pill'>Магний</span> 2 капсулы (через неделю, если стул не жиже, — 3)"],
+         ["22:00","если купил","<span class='pill'>Псиллиум</span> 5 г в 300 мл воды"]);
   return r;
 }
 
@@ -239,12 +254,21 @@ DAYS.forEach((d,i)=>{
     </table>
     <p class="tips">Без отказа и без натуживания. Техника есть, но связки отвыкли: никаких проверок максимума до декабря. Боль в локте/плече/колене — вес не поднимаем. Печёт лёжа → жим гантелей на наклонной вместо жима лёжа.</p></div>`;
 
+  const lifts=g?W[d.gym].filter(e=>!/Кардио|Планка/.test(e[0])).map(e=>e[0].replace(/ \(.*\)/,"")+": ___ кг × ___").join("\n"):"";
+  const msgs=[
+    ["🌅 Утро","07:40","Вес: ___ кг",""],
+    ...(g?[["🏋️ После зала","20:40","Зал "+d.gym+":\n"+lifts+"\nСамочувствие: ___","Пиши вес и повторы лучшего подхода. Если что-то болело — тоже."]]:[]),
+    ["🌙 Вечер","22:05","Стул: тип ___ (1–7), ___ раз\nЭнергия: ___/10\nГолод / тяга к сладкому: ___\nИзжога: ___/10\nЕда по плану: да / нет (что съел лишнего)\nШаги: ___","Стул: 1–2 твёрдый · 3–4 норма · 5 мягкие кусочки · 6–7 кашица/вода"],
+    ...(d.k==="Вс"?[["📊 Итоги недели","22:05","Скрин весов за неделю\nТренировок: ___ из 3\nЧто было тяжело: ___","Раз в 2 недели в понедельник утром — замеры талии, ягодиц, груди: 26.10, 09.11, 23.11, 07.12. Фото фас/бок/спина: 09.11, 07.12."]]:[]),
+  ];
+  h+=`<div class="sec"><h3>${N()} Что написать коучу</h3><div class="msgs">${msgs.map(m=>`<div class="msg"><div class="h"><b>${m[0]} <em>${m[1]}</em></b><button onclick="cp(this)">Скопировать</button></div><pre>${m[2]}</pre>${m[3]?`<div class="note">${m[3]}</div>`:""}</div>`).join("")}</div></div>`;
+
   if(d.prep) h+=`<div class="sec"><div class="box">${d.prep}</div></div>`;
 
   h+=`<div class="sec"><h3>${N()} Правила дня</h3><div class="rules">
     <span>💧 Вода 3–3,5 л</span><span>🧂 Соль +1 ч. л.</span><span>👣 8–10 тыс. шагов</span>
     <span>🚫 Хлеб, сахар, крупы, картошка</span><span>🚫 Газировка</span><span>🔥 Ничего жареного</span>
-    <span>⏰ Еда за 3 ч до сна</span><span>☕ Кофе только с едой, до 15:00</span></div></div>
+    <span>⏰ Еда за 3 ч до сна</span><span>☕ Кофе после завтрака, до 15:00</span></div></div>
   </section>`;
   box.insertAdjacentHTML("beforeend",h);
 
@@ -259,6 +283,7 @@ function show(i){
   [...tabs.children].forEach((b,j)=>b.classList.toggle("on",j===i));
 }
 show((new Date().getDay()+6)%7);
+function cp(b){const t=b.closest('.msg').querySelector('pre').innerText;try{navigator.clipboard.writeText(t).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Скопировать',1500)})}catch(e){}}
 function printOne(){
   const st=document.createElement("style");
   st.textContent=`@media print{.day{display:none!important}#d${cur}{display:block!important}}`;
